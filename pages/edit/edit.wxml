@@ -2,87 +2,87 @@
 <navigation-bar title="编辑信息" back="{{true}}" color="black" background="#FFF"></navigation-bar>
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="container">
-    <view class="edit-section">
+    <view class="edit-section" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">基本信息</text>
       </view>
       <view class="section-content">
         <view class="form-item">
           <text class="label">姓名</text>
-          <input class="input" value="{{name}}" bindinput="onNameInput" placeholder="请输入姓名" />
+          <input class="input" type="text" value="{{name}}" bindinput="onNameInput" placeholder="请输入姓名" focus-class="input-focus" />
         </view>
         <view class="form-item">
           <text class="label">职位</text>
-          <input class="input" value="{{title}}" bindinput="onTitleInput" placeholder="请输入职位" />
+          <input class="input" type="text" value="{{title}}" bindinput="onTitleInput" placeholder="请输入职位" focus-class="input-focus" />
         </view>
       </view>
     </view>
 
-    <view class="edit-section">
+    <view class="edit-section" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">联系方式</text>
       </view>
       <view class="section-content">
         <view class="form-item">
           <text class="label">电话</text>
-          <input class="input" value="{{phone}}" bindinput="onPhoneInput" placeholder="请输入电话" />
+          <input class="input" type="text" value="{{phone}}" bindinput="onPhoneInput" placeholder="请输入电话" focus-class="input-focus" />
         </view>
         <view class="form-item">
           <text class="label">邮箱</text>
-          <input class="input" value="{{email}}" bindinput="onEmailInput" placeholder="请输入邮箱" />
+          <input class="input" type="text" value="{{email}}" bindinput="onEmailInput" placeholder="请输入邮箱" focus-class="input-focus" />
         </view>
         <view class="form-item">
           <text class="label">地址</text>
-          <input class="input" value="{{address}}" bindinput="onAddressInput" placeholder="请输入地址" />
+          <input class="input" type="text" value="{{address}}" bindinput="onAddressInput" placeholder="请输入地址" focus-class="input-focus" />
         </view>
       </view>
     </view>
 
-    <view class="edit-section">
+    <view class="edit-section" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">专业技能</text>
       </view>
       <view class="section-content">
         <view class="skills-input">
-          <input class="input" value="{{newSkill}}" bindinput="onNewSkillInput" placeholder="添加新技能" />
-          <view class="add-btn" bindtap="addSkill">添加</view>
+          <input class="input" type="text" value="{{newSkill}}" bindinput="onNewSkillInput" placeholder="添加新技能" focus-class="input-focus" />
+          <view class="add-btn" hover-class="add-btn-hover" bindtap="addSkill">添加</view>
         </view>
         <view class="skills-list">
-          <view class="skill-tag" wx:for="{{skills}}" wx:key="index">
+          <view class="skill-tag" wx:for="{{skills}}" wx:key="index" hover-class="skill-tag-hover">
             {{item}}
-            <text class="delete-btn" bindtap="deleteSkill" data-index="{{index}}">×</text>
+            <text class="delete-btn" hover-class="delete-btn-hover" bindtap="deleteSkill" data-index="{{index}}">×</text>
           </view>
         </view>
       </view>
     </view>
 
-    <view class="edit-section">
+    <view class="edit-section" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">兴趣爱好</text>
       </view>
       <view class="section-content">
         <view class="skills-input">
-          <input class="input" value="{{newHobby}}" bindinput="onNewHobbyInput" placeholder="添加新爱好" />
-          <view class="add-btn" bindtap="addHobby">添加</view>
+          <input class="input" type="text" value="{{newHobby}}" bindinput="onNewHobbyInput" placeholder="添加新爱好" focus-class="input-focus" />
+          <view class="add-btn" hover-class="add-btn-hover" bindtap="addHobby">添加</view>
         </view>
         <view class="skills-list">
-          <view class="skill-tag" wx:for="{{hobbies}}" wx:key="index">
+          <view class="skill-tag" wx:for="{{hobbies}}" wx:key="index" hover-class="skill-tag-hover">
             {{item}}
-            <text class="delete-btn" bindtap="deleteHobby" data-index="{{index}}">×</text>
+            <text class="delete-btn" hover-class="delete-btn-hover" bindtap="deleteHobby" data-index="{{index}}">×</text>
           </view>
         </view>
       </view>
     </view>
 
-    <view class="edit-section">
+    <view class="edit-section" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">个人简介</text>
       </view>
       <view class="section-content">
-        <textarea class="textarea" value="{{about}}" bindinput="onAboutInput" placeholder="请输入个人简介" />
+        <textarea class="textarea" value="{{about}}" bindinput="onAboutInput" placeholder="请输入个人简介" focus-class="textarea-focus" />
       </view>
     </view>
-  <view style="min-height: 160rpx; height: 160rpx; flex-shrink: 0;"></view>
+    <view style="min-height: 160rpx; height: 160rpx; flex-shrink: 0;"></view>
   </view>
 </scroll-view> 
-<view class="save-btn" bindtap="saveChanges">保存修改</view>
+<view class="save-btn" hover-class="save-btn-hover" bindtap="saveChanges">保存修改</view>

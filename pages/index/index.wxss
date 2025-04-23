@@ -4,6 +4,7 @@ page {
   display: flex;
   flex-direction: column;
   background: #f5f7fa;
+  font-family: system-ui, -apple-system;
 }
 
 .scrollarea {

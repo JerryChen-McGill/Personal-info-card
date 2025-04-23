@@ -154,14 +154,14 @@ Page({
       });
     }
 
-    wx.showToast({
-      title: '保存成功',
-      icon: 'success',
-      duration: 2000,
-      success: () => {
-        setTimeout(() => {
-          wx.navigateBack();
-        }, 2000);
+    // 先返回上一页，再显示提示
+    wx.navigateBack({
+      complete: () => {
+        wx.showToast({
+          title: '保存成功',
+          icon: 'success',
+          duration: 1500
+        });
       }
     });
   }
