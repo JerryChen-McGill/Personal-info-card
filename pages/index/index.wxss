@@ -37,7 +37,8 @@ page {
   transition: all 0.3s ease;
 }
 
-.card:active {
+/* 替换 .card:active 为 hover-class */
+.card-hover {
   transform: translateY(4rpx);
   box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.1);
 }
@@ -58,7 +59,8 @@ page {
   transition: all 0.3s ease;
 }
 
-.avatar:active {
+/* 替换 .avatar:active 为 hover-class */
+.avatar-hover {
   transform: scale(0.98);
 }
 
@@ -90,8 +92,13 @@ page {
 .social-links {
   display: flex;
   justify-content: center;
-  gap: 30rpx;
   margin: 20rpx 0;
+  /* 替换 gap: 30rpx */
+}
+
+/* 为社交图标添加间距 */
+.social-links .social-item:not(:last-child) {
+  margin-right: 30rpx;
 }
 
 .social-item {
@@ -105,7 +112,8 @@ page {
   transition: all 0.3s ease;
 }
 
-.social-item:active {
+/* 替换 .social-item:active 为 hover-class */
+.social-item-hover {
   transform: scale(0.9);
   background: #4A90E2;
 }
@@ -115,7 +123,7 @@ page {
   font-size: 36rpx;
 }
 
-.social-item:active .iconfont {
+.social-item-hover .iconfont {
   color: #fff;
 }
 
@@ -138,7 +146,8 @@ page {
   transition: all 0.3s ease;
 }
 
-.contact-item:active {
+/* 替换 .contact-item:active 为 hover-class */
+.contact-item-hover {
   background: #f5f7fa;
   transform: scale(0.98);
 }
@@ -184,7 +193,8 @@ page {
   transition: all 0.3s ease;
 }
 
-.contact-action:active {
+/* 替换 .contact-action:active 为 hover-class */
+.contact-action-hover {
   background: #4A90E2;
 }
 
@@ -193,7 +203,7 @@ page {
   font-size: 32rpx;
 }
 
-.contact-action:active .iconfont {
+.contact-action-hover .iconfont {
   color: #fff;
 }
 
@@ -218,7 +228,12 @@ page {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 20rpx;
+  /* 替换 gap: 20rpx */
+}
+
+/* 为技能标签添加间距 */
+.skills .skill-tag {
+  margin: 0 10rpx 20rpx 10rpx;
 }
 
 .skill-tag {
@@ -231,7 +246,8 @@ page {
   transition: all 0.3s ease;
 }
 
-.skill-tag:active {
+/* 替换 .skill-tag:active 为 hover-class */
+.skill-tag-hover {
   background: #4A90E2;
   color: #fff;
   transform: scale(0.95);
@@ -272,7 +288,8 @@ page {
   font-size: 36rpx;
 }
 
-.edit-btn:active {
+/* 替换 .edit-btn:active 为 hover-class */
+.edit-btn-hover {
   transform: scale(0.9);
   background: rgba(255, 255, 255, 0.3);
 }
@@ -290,7 +307,12 @@ page {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 20rpx;
+  /* 替换 gap: 20rpx */
+}
+
+/* 为爱好标签添加间距 */
+.hobbies .hobby-tag {
+  margin: 0 10rpx 20rpx 10rpx;
 }
 
 .hobby-tag {
@@ -303,7 +325,8 @@ page {
   transition: all 0.3s ease;
 }
 
-.hobby-tag:active {
+/* 替换 .hobby-tag:active 为 hover-class */
+.hobby-tag-hover {
   background: #4A90E2;
   color: #fff;
   transform: scale(0.95);
