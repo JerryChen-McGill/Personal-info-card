@@ -1,6 +1,6 @@
 <!--index.wxml-->
 <navigation-bar title="个人名片" back="{{false}}" color="white" background="#4A90E2">
-  <view slot="right" class="edit-btn" bindtap="goToEdit">
+  <view slot="right" class="edit-btn" hover-class="edit-btn-hover" bindtap="goToEdit">
     <image src="/images/edit.png" mode="aspectFit" class="edit-icon"></image>
   </view>
 </navigation-bar>
@@ -15,7 +15,7 @@
       </view>
       <text class="title">{{userInfo.title}}</text>
       <view class="social-links">
-        <view class="social-item">
+        <view class="social-item" hover-class="social-item-hover">
           <text class="iconfont icon-wechat"></text>
         </view>
         <view class="social-item">
@@ -27,7 +27,7 @@
       </view>
       <view class="divider"></view>
       <view class="contact">
-        <view class="contact-item" bindtap="copyPhoneNumber">
+        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyPhoneNumber">
           <view class="icon-container">
             <text class="iconfont icon-phone"></text>
           </view>
@@ -35,7 +35,7 @@
             <text class="contact-label">电话</text>
             <text class="contact-value">{{userInfo.phone}}</text>
           </view>
-          <view class="contact-action">
+          <view class="contact-action" hover-class="contact-action-hover">
             <text class="iconfont icon-copy"></text>
           </view>
         </view>
@@ -68,14 +68,14 @@
       <view class="skills-section">
         <text class="section-title">我擅长</text>
         <view class="skills">
-          <view class="skill-tag" wx:for="{{userInfo.skills}}" wx:key="index">{{item}}</view>
+          <view class="skill-tag" hover-class="skill-tag-hover" wx:for="{{userInfo.skills}}" wx:key="index">{{item}}</view>
         </view>
       </view>
       <view class="divider"></view>
       <view class="hobbies-section">
         <text class="section-title">我喜欢</text>
         <view class="hobbies">
-          <view class="hobby-tag" wx:for="{{userInfo.hobbies}}" wx:key="index">{{item}}</view>
+          <view class="hobby-tag" hover-class="hobby-tag-hover" wx:for="{{userInfo.hobbies}}" wx:key="index">{{item}}</view>
         </view>
       </view>
       <view class="divider"></view>
