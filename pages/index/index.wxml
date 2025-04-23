@@ -1,0 +1,90 @@
+<!--index.wxml-->
+<navigation-bar title="个人名片" back="{{false}}" color="white" background="#4A90E2">
+  <view slot="right" class="edit-btn" bindtap="goToEdit">
+    <image src="/images/edit.png" mode="aspectFit" class="edit-icon"></image>
+  </view>
+</navigation-bar>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="card">
+    <view class="avatar-container">
+      <image class="avatar" src="/images/avatar.png" mode="aspectFill"></image>
+    </view>
+    <view class="info">
+      <view class="name-container">
+        <text class="name">{{userInfo.name}}</text>
+      </view>
+      <text class="title">{{userInfo.title}}</text>
+      <view class="social-links">
+        <view class="social-item">
+          <text class="iconfont icon-wechat"></text>
+        </view>
+        <view class="social-item">
+          <text class="iconfont icon-github"></text>
+        </view>
+        <view class="social-item">
+          <text class="iconfont icon-linkedin"></text>
+        </view>
+      </view>
+      <view class="divider"></view>
+      <view class="contact">
+        <view class="contact-item" bindtap="copyPhoneNumber">
+          <view class="icon-container">
+            <text class="iconfont icon-phone"></text>
+          </view>
+          <view class="contact-info">
+            <text class="contact-label">电话</text>
+            <text class="contact-value">{{userInfo.phone}}</text>
+          </view>
+          <view class="contact-action">
+            <text class="iconfont icon-copy"></text>
+          </view>
+        </view>
+        <view class="contact-item">
+          <view class="icon-container">
+            <text class="iconfont icon-email"></text>
+          </view>
+          <view class="contact-info">
+            <text class="contact-label">邮箱</text>
+            <text class="contact-value">{{userInfo.email}}</text>
+          </view>
+          <view class="contact-action">
+            <text class="iconfont icon-mail"></text>
+          </view>
+        </view>
+        <view class="contact-item">
+          <view class="icon-container">
+            <text class="iconfont icon-location"></text>
+          </view>
+          <view class="contact-info">
+            <text class="contact-label">地址</text>
+            <text class="contact-value">{{userInfo.address}}</text>
+          </view>
+          <view class="contact-action">
+            <text class="iconfont icon-map"></text>
+          </view>
+        </view>
+      </view>
+      <view class="divider"></view>
+      <view class="skills-section">
+        <text class="section-title">我擅长</text>
+        <view class="skills">
+          <view class="skill-tag" wx:for="{{userInfo.skills}}" wx:key="index">{{item}}</view>
+        </view>
+      </view>
+      <view class="divider"></view>
+      <view class="hobbies-section">
+        <text class="section-title">我喜欢</text>
+        <view class="hobbies">
+          <view class="hobby-tag" wx:for="{{userInfo.hobbies}}" wx:key="index">{{item}}</view>
+        </view>
+      </view>
+      <view class="divider"></view>
+      <view class="about-section">
+        <text class="section-title">关于我</text>
+        <view class="about-content">
+          <text>{{userInfo.about}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</scroll-view>
