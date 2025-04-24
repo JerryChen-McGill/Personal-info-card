@@ -27,40 +27,31 @@
       </view>
       <view class="divider"></view>
       <view class="contact">
-        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyPhoneNumber">
+        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="phone">
           <view class="icon-container">
-            <text class="iconfont icon-phone"></text>
+            <image src="/images/wechat.png" class="contact-icon"></image>
           </view>
           <view class="contact-info">
-            <text class="contact-label">电话</text>
+            <text class="contact-label">微信</text>
             <text class="contact-value">{{userInfo.phone}}</text>
           </view>
-          <view class="contact-action" hover-class="contact-action-hover">
-            <text class="iconfont icon-copy"></text>
-          </view>
         </view>
-        <view class="contact-item">
+        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="email">
           <view class="icon-container">
-            <text class="iconfont icon-email"></text>
+            <image src="/images/e-mail.png" class="contact-icon"></image>
           </view>
           <view class="contact-info">
             <text class="contact-label">邮箱</text>
             <text class="contact-value">{{userInfo.email}}</text>
           </view>
-          <view class="contact-action">
-            <text class="iconfont icon-mail"></text>
-          </view>
         </view>
-        <view class="contact-item">
+        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="address">
           <view class="icon-container">
-            <text class="iconfont icon-location"></text>
+            <image src="/images/address.png" class="contact-icon"></image>
           </view>
           <view class="contact-info">
             <text class="contact-label">地址</text>
             <text class="contact-value">{{userInfo.address}}</text>
-          </view>
-          <view class="contact-action">
-            <text class="iconfont icon-map"></text>
           </view>
         </view>
       </view>

@@ -19,12 +19,12 @@
 
 /* 使用组合选择器设置相邻edit-section之间的间距 */
 .edit-section + .edit-section {
-  margin-top: 32rpx;
+  margin-top: 30rpx;
 }
 
 /* 为最后一个edit-section添加额外的底部间距 */
 .edit-section:last-child {
-  margin-bottom: 120rpx;
+  margin-bottom: 520rpx;
 }
 
 .edit-section-hover {

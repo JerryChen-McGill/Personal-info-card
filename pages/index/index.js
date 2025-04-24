@@ -2,18 +2,23 @@
 Page({
   data: {
     userInfo: {
-      name: 'Jerry',
-      title: '后端开发工程师',
-      phone: '138****8888',
-      email: 'example@email.com',
-      address: '北京市朝阳区',
-      skills: ['HTML5', 'CSS3', 'JavaScript', 'Vue', 'Node.js', 'MySQL'],
-      hobbies: ['单板滑雪', '阅读', '乒乓球', '跑步', '共学'],
-      about: '热爱编程，专注于后端开发，擅长Node.js和数据库设计。喜欢研究新技术，乐于分享技术经验。'
+      name: '卡皮巴拉',
+      title: '前端理发师',
+      phone: 'mywechat',
+      email: 'don_t@capibala.com',
+      address: '忘了我家在哪了',
+      skills: ['吃', '睡', '走神'],
+      hobbies: ['走神', '睡', '吃'],
+      about: '这个人很懒，什么介绍也没留下。'
     }
   },
 
   onLoad() {
+    // 初始化时，如果本地存储没有数据，将默认数据保存到本地存储
+    const storedUserInfo = wx.getStorageSync('userInfo');
+    if (!storedUserInfo) {
+      wx.setStorageSync('userInfo', this.data.userInfo);
+    }
     this.loadUserInfo();
   },
 
@@ -25,17 +30,16 @@ Page({
     const storedUserInfo = wx.getStorageSync('userInfo');
     if (storedUserInfo) {
       this.setData({
-        userInfo: {
-          ...this.data.userInfo,
-          ...storedUserInfo
-        }
+        userInfo: storedUserInfo
       });
     }
   },
 
-  copyPhoneNumber() {
+  copyText(event) {
+    const { type } = event.currentTarget.dataset;
+    const text = this.data.userInfo[type];
     wx.setClipboardData({
-      data: this.data.userInfo.phone,
+      data: text,
       success: () => {
         wx.showToast({
           title: '复制成功',

@@ -1,30 +1,30 @@
 Page({
   data: {
-    name: 'Jerry',
-    title: '后端开发工程师',
-    phone: '138****8888',
-    email: 'example@email.com',
-    address: '北京市朝阳区',
-    skills: ['HTML5', 'CSS3', 'JavaScript', 'Vue', 'Node.js', 'MySQL'],
-    hobbies: ['单板滑雪', '阅读', '乒乓球', '跑步', '共学'],
+    name: '',
+    title: '',
+    phone: '',
+    email: '',
+    address: '',
+    skills: [],
+    hobbies: [],
     newSkill: '',
     newHobby: '',
-    about: '热爱编程，专注于后端开发，擅长Node.js和数据库设计。喜欢研究新技术，乐于分享技术经验。'
+    about: ''
   },
 
   onLoad() {
-    // 从本地存储获取数据
-    const userInfo = wx.getStorageSync('userInfo') || {};
+    // 从本地存储加载数据
+    const userInfo = wx.getStorageSync('userInfo');
     if (userInfo) {
       this.setData({
-        name: userInfo.name || this.data.name,
-        title: userInfo.title || this.data.title,
-        phone: userInfo.phone || this.data.phone,
-        email: userInfo.email || this.data.email,
-        address: userInfo.address || this.data.address,
-        skills: userInfo.skills || this.data.skills,
-        hobbies: userInfo.hobbies || this.data.hobbies,
-        about: userInfo.about || this.data.about
+        name: userInfo.name || '',
+        title: userInfo.title || '',
+        phone: userInfo.phone || '',
+        email: userInfo.email || '',
+        address: userInfo.address || '',
+        skills: userInfo.skills || [],
+        hobbies: userInfo.hobbies || [],
+        about: userInfo.about || ''
       });
     }
   },

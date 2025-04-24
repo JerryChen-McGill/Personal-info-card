@@ -164,6 +164,11 @@ page {
   margin-right: 20rpx;
 }
 
+.contact-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
 .contact-info {
   flex: 1;
   text-align: left;
@@ -180,32 +185,6 @@ page {
   font-size: 28rpx;
   color: #333;
   font-weight: 500;
-}
-
-.contact-action {
-  width: 60rpx;
-  height: 60rpx;
-  background: #f0f4ff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 20rpx;
-  transition: all 0.3s ease;
-}
-
-/* 替换 .contact-action:active 为 hover-class */
-.contact-action-hover {
-  background: #4A90E2;
-}
-
-.contact-action .iconfont {
-  color: #4A90E2;
-  font-size: 32rpx;
-}
-
-.contact-action-hover .iconfont {
-  color: #fff;
 }
 
 .iconfont {

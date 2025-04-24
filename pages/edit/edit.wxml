@@ -12,7 +12,7 @@
           <input class="input" type="text" value="{{name}}" bindinput="onNameInput" placeholder="请输入姓名" focus-class="input-focus" />
         </view>
         <view class="form-item">
-          <text class="label">职位</text>
+          <text class="label">标签</text>
           <input class="input" type="text" value="{{title}}" bindinput="onTitleInput" placeholder="请输入职位" focus-class="input-focus" />
         </view>
       </view>
