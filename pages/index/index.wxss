@@ -90,44 +90,6 @@ page {
   margin-bottom: 20rpx;
 }
 
-.social-links {
-  display: flex;
-  justify-content: center;
-  margin: 20rpx 0;
-  /* 替换 gap: 30rpx */
-}
-
-/* 为社交图标添加间距 */
-.social-links .social-item:not(:last-child) {
-  margin-right: 30rpx;
-}
-
-.social-item {
-  width: 60rpx;
-  height: 60rpx;
-  background: #f0f4ff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-/* 替换 .social-item:active 为 hover-class */
-.social-item-hover {
-  transform: scale(0.9);
-  background: #4A90E2;
-}
-
-.social-item .iconfont {
-  color: #4A90E2;
-  font-size: 36rpx;
-}
-
-.social-item-hover .iconfont {
-  color: #fff;
-}
-
 .divider {
   height: 2rpx;
   background: linear-gradient(to right, transparent, #4A90E2, transparent);
@@ -135,15 +97,15 @@ page {
 }
 
 .contact {
-  margin: 30rpx 0;
+  margin: 20rpx 0;
 }
 
 .contact-item {
   display: flex;
   align-items: center;
-  padding: 20rpx;
-  margin: 10rpx 0;
-  border-radius: 16rpx;
+  padding: 12rpx;
+  margin: 6rpx 0;
+  border-radius: 12rpx;
   transition: all 0.3s ease;
 }
 
@@ -154,8 +116,8 @@ page {
 }
 
 .icon-container {
-  width: 80rpx;
-  height: 80rpx;
+  width: 60rpx;
+  height: 60rpx;
   background: #f0f4ff;
   border-radius: 50%;
   display: flex;
@@ -165,8 +127,8 @@ page {
 }
 
 .contact-icon {
-  width: 40rpx;
-  height: 40rpx;
+  width: 32rpx;
+  height: 32rpx;
 }
 
 .contact-info {
@@ -250,7 +212,7 @@ page {
   border-radius: 16rpx;
 }
 
-/* 编辑按钮样式 */
+/* 编辑按钮容器样式调整 */
 .edit-btn {
   width: 60rpx;
   height: 60rpx;
@@ -261,6 +223,7 @@ page {
   justify-content: center;
   margin-right: 20rpx;
   transition: all 0.3s ease;
+  margin-top: -8rpx; /* 向上偏移 */
 }
 
 .edit-btn .iconfont {
@@ -310,4 +273,11 @@ page {
   background: #4A90E2;
   color: #fff;
   transform: scale(0.95);
+}
+
+/* 导航栏标题居中样式 */
+.navigation-bar__title {
+  width: 100% !important;
+  text-align: center !important;
+  left: 0 !important;
 }

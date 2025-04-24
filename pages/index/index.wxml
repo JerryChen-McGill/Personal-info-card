@@ -7,54 +7,13 @@
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="card">
     <view class="avatar-container">
-      <image class="avatar" src="/images/avatar.png" mode="aspectFill"></image>
+      <image class="avatar" src="{{userInfo.avatarUrl || '/images/avatar.png'}}" mode="aspectFill"></image>
     </view>
     <view class="info">
       <view class="name-container">
         <text class="name">{{userInfo.name}}</text>
       </view>
       <text class="title">{{userInfo.title}}</text>
-      <view class="social-links">
-        <view class="social-item" hover-class="social-item-hover">
-          <text class="iconfont icon-wechat"></text>
-        </view>
-        <view class="social-item">
-          <text class="iconfont icon-github"></text>
-        </view>
-        <view class="social-item">
-          <text class="iconfont icon-linkedin"></text>
-        </view>
-      </view>
-      <view class="divider"></view>
-      <view class="contact">
-        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="phone">
-          <view class="icon-container">
-            <image src="/images/wechat.png" class="contact-icon"></image>
-          </view>
-          <view class="contact-info">
-            <text class="contact-label">微信</text>
-            <text class="contact-value">{{userInfo.phone}}</text>
-          </view>
-        </view>
-        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="email">
-          <view class="icon-container">
-            <image src="/images/e-mail.png" class="contact-icon"></image>
-          </view>
-          <view class="contact-info">
-            <text class="contact-label">邮箱</text>
-            <text class="contact-value">{{userInfo.email}}</text>
-          </view>
-        </view>
-        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="address">
-          <view class="icon-container">
-            <image src="/images/address.png" class="contact-icon"></image>
-          </view>
-          <view class="contact-info">
-            <text class="contact-label">地址</text>
-            <text class="contact-value">{{userInfo.address}}</text>
-          </view>
-        </view>
-      </view>
       <view class="divider"></view>
       <view class="skills-section">
         <text class="section-title">我擅长</text>
@@ -74,6 +33,27 @@
         <text class="section-title">关于我</text>
         <view class="about-content">
           <text>{{userInfo.about}}</text>
+        </view>
+      </view>
+      <view class="divider"></view>
+      <view class="contact">
+        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="phone">
+          <view class="icon-container">
+            <image src="/images/wechat.png" class="contact-icon"></image>
+          </view>
+          <text class="contact-value">{{userInfo.phone}}</text>
+        </view>
+        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="email">
+          <view class="icon-container">
+            <image src="/images/e-mail.png" class="contact-icon"></image>
+          </view>
+          <text class="contact-value">{{userInfo.email}}</text>
+        </view>
+        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="address">
+          <view class="icon-container">
+            <image src="/images/address.png" class="contact-icon"></image>
+          </view>
+          <text class="contact-value">{{userInfo.address}}</text>
         </view>
       </view>
     </view>

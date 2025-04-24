@@ -9,7 +9,8 @@ Page({
       address: '忘了我家在哪了',
       skills: ['吃', '睡', '走神'],
       hobbies: ['走神', '睡', '吃'],
-      about: '这个人很懒，什么介绍也没留下。'
+      about: '这个人很懒，什么介绍也没留下。',
+      avatarUrl: '/images/avatar.png'
     }
   },
 
