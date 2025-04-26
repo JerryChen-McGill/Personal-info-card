@@ -14,27 +14,7 @@
         <text class="name">{{userInfo.name}}</text>
       </view>
       <text class="title">{{userInfo.title}}</text>
-      <view class="divider"></view>
-      <view class="skills-section">
-        <text class="section-title">我擅长</text>
-        <view class="skills">
-          <view class="skill-tag" hover-class="skill-tag-hover" wx:for="{{userInfo.skills}}" wx:key="index">{{item}}</view>
-        </view>
-      </view>
-      <view class="divider"></view>
-      <view class="hobbies-section">
-        <text class="section-title">我喜欢</text>
-        <view class="hobbies">
-          <view class="hobby-tag" hover-class="hobby-tag-hover" wx:for="{{userInfo.hobbies}}" wx:key="index">{{item}}</view>
-        </view>
-      </view>
-      <view class="divider"></view>
-      <view class="about-section">
-        <text class="section-title">关于我</text>
-        <view class="about-content">
-          <text>{{userInfo.about}}</text>
-        </view>
-      </view>
+
       <view class="divider"></view>
       <view class="contact">
         <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="phone">
@@ -56,6 +36,42 @@
           <text class="contact-value">{{userInfo.address}}</text>
         </view>
       </view>
+
+      <view class="divider"></view>
+      <view class="skills-section">
+        <text class="section-title">我擅长</text>
+        <view class="skills">
+          <view class="skill-tag" hover-class="skill-tag-hover" wx:for="{{userInfo.skills}}" wx:key="index">{{item}}</view>
+        </view>
+      </view>
+
+      <view class="divider"></view>
+      <view class="hobbies-section">
+        <text class="section-title">我喜欢</text>
+        <view class="hobbies">
+          <view class="hobby-tag" hover-class="hobby-tag-hover" wx:for="{{userInfo.hobbies}}" wx:key="index">{{item}}</view>
+        </view>
+      </view>
+
+      <view class="divider"></view>
+      <view class="about-section">
+        <text class="section-title">关于我</text>
+        <view class="about-content">
+          <text>{{userInfo.about}}</text>
+        </view>
+      </view>
+
+      <!-- 自定义块列表 -->
+      <block wx:if="{{userInfo.customBlocks && userInfo.customBlocks.length > 0}}">
+        <view class="divider"></view>
+        <view wx:for="{{userInfo.customBlocks}}" wx:key="id" class="custom-block-section">
+          <text class="section-title">{{item.title}}</text>
+          <view class="about-content">
+            <text>{{item.content}}</text>
+          </view>
+        </view>
+      </block>
+
     </view>
   </view>
 </scroll-view>

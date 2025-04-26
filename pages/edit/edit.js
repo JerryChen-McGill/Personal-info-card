@@ -11,7 +11,35 @@ Page({
     newHobby: '',
     about: '',
     avatarUrl: '',
-    isNewImageSelected: false // 添加标记，表示是否选择了新图片
+    isNewImageSelected: false, // 添加标记，表示是否选择了新图片
+    customBlocks: [], // 存储自定义块的数组
+    containerHeight: 'calc(100vh + 1200rpx)', // 初始容器高度
+    scrollAreaPadding: '720rpx'  // 初始底部padding
+  },
+
+  // 计算容器高度和底部padding
+  calculateHeight() {
+    const baseHeight = 1200 // 基础内容高度
+    const customBlockHeight = 466 // 每个自定义块的精确高度
+    const basePadding = 720 // 基础底部padding
+    const blockPadding = 50 // 每个块额外需要的padding调整值
+    
+    const totalHeight = baseHeight + (this.data.customBlocks.length * customBlockHeight)
+    const totalPadding = basePadding + (this.data.customBlocks.length * blockPadding)
+    
+    return {
+      containerHeight: `calc(100vh + ${totalHeight}rpx)`,
+      scrollAreaPadding: `${totalPadding}rpx`
+    }
+  },
+
+  // 更新容器高度
+  updateContainerHeight() {
+    const { containerHeight, scrollAreaPadding } = this.calculateHeight()
+    this.setData({
+      containerHeight,
+      scrollAreaPadding
+    })
   },
 
   onLoad() {
@@ -27,7 +55,11 @@ Page({
         skills: userInfo.skills || [],
         hobbies: userInfo.hobbies || [],
         about: userInfo.about || '',
-        avatarUrl: userInfo.avatarUrl || ''
+        avatarUrl: userInfo.avatarUrl || '',
+        customBlocks: userInfo.customBlocks || [] // 加载自定义块数据
+      }, () => {
+        // 加载完数据后更新容器高度
+        this.updateContainerHeight()
       });
     }
   },
@@ -172,7 +204,72 @@ Page({
     this.setData({ hobbies });
   },
 
-  // 更新全局数据和本地存储
+  // 添加新的自定义块
+  addCustomBlock() {
+    wx.showModal({
+      title: '新增自定义内容',
+      editable: true,
+      placeholderText: '请输入标题',
+      success: (res) => {
+        if (res.confirm && res.content.trim()) {
+          const newBlock = {
+            id: 'block_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+            title: res.content.trim(),
+            content: '',
+            order: this.data.customBlocks.length + 1
+          };
+          
+          this.setData({
+            customBlocks: [...this.data.customBlocks, newBlock]
+          }, () => {
+            // 添加块后更新容器高度
+            this.updateContainerHeight();
+          });
+        }
+      }
+    });
+  },
+
+  // 删除自定义块
+  deleteCustomBlock(e) {
+    const { id } = e.currentTarget.dataset;
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这个自定义内容吗？',
+      success: (res) => {
+        if (res.confirm) {
+          const customBlocks = this.data.customBlocks.filter(block => block.id !== id);
+          // 重新排序
+          const reorderedBlocks = customBlocks.map((block, index) => ({
+            ...block,
+            order: index + 1
+          }));
+          
+          this.setData({
+            customBlocks: reorderedBlocks
+          }, () => {
+            // 删除块后更新容器高度
+            this.updateContainerHeight();
+          });
+        }
+      }
+    });
+  },
+
+  // 更新自定义块内容
+  onCustomBlockInput(e) {
+    const { id } = e.currentTarget.dataset;
+    const { value } = e.detail;
+    const customBlocks = this.data.customBlocks.map(block => 
+      block.id === id ? { ...block, content: value } : block
+    );
+    
+    this.setData({
+      customBlocks
+    });
+  },
+
+  // 修改更新全局数据的函数
   updateGlobalData(savedImagePath) {
     return new Promise((resolve, reject) => {
       try {
@@ -185,7 +282,8 @@ Page({
           skills: this.data.skills,
           hobbies: this.data.hobbies,
           about: this.data.about,
-          avatarUrl: savedImagePath
+          avatarUrl: savedImagePath,
+          customBlocks: this.data.customBlocks // 添加自定义块数据
         };
 
         // 更新本地存储

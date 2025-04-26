@@ -1,7 +1,7 @@
 <!--edit.wxml-->
 <navigation-bar title="编辑信息" back="{{true}}" color="black" background="#FFF"></navigation-bar>
-<scroll-view class="scrollarea" scroll-y type="list">
-  <view class="container">
+<scroll-view class="scrollarea" scroll-y type="list" style="padding-bottom: {{scrollAreaPadding}};">
+  <view class="container" style="min-height: {{containerHeight}};">
     <view class="edit-section" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">头像</text>
@@ -29,51 +29,6 @@
 
     <view class="edit-section" hover-class="edit-section-hover">
       <view class="section-header">
-        <text class="section-title">专业技能</text>
-      </view>
-      <view class="section-content">
-        <view class="skills-input">
-          <input class="input" type="text" value="{{newSkill}}" bindinput="onNewSkillInput" placeholder="添加新技能" focus-class="input-focus" />
-          <view class="add-btn" hover-class="add-btn-hover" bindtap="addSkill">添加</view>
-        </view>
-        <view class="skills-list">
-          <view class="skill-tag" wx:for="{{skills}}" wx:key="index" hover-class="skill-tag-hover">
-            {{item}}
-            <text class="delete-btn" hover-class="delete-btn-hover" bindtap="deleteSkill" data-index="{{index}}">×</text>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <view class="edit-section" hover-class="edit-section-hover">
-      <view class="section-header">
-        <text class="section-title">兴趣爱好</text>
-      </view>
-      <view class="section-content">
-        <view class="skills-input">
-          <input class="input" type="text" value="{{newHobby}}" bindinput="onNewHobbyInput" placeholder="添加新爱好" focus-class="input-focus" />
-          <view class="add-btn" hover-class="add-btn-hover" bindtap="addHobby">添加</view>
-        </view>
-        <view class="skills-list">
-          <view class="skill-tag" wx:for="{{hobbies}}" wx:key="index" hover-class="skill-tag-hover">
-            {{item}}
-            <text class="delete-btn" hover-class="delete-btn-hover" bindtap="deleteHobby" data-index="{{index}}">×</text>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <view class="edit-section" hover-class="edit-section-hover">
-      <view class="section-header">
-        <text class="section-title">个人简介</text>
-      </view>
-      <view class="section-content">
-        <textarea class="textarea" value="{{about}}" bindinput="onAboutInput" placeholder="请输入个人简介" focus-class="textarea-focus" />
-      </view>
-    </view>
-
-    <view class="edit-section" hover-class="edit-section-hover">
-      <view class="section-header">
         <text class="section-title">联系方式</text>
       </view>
       <view class="section-content">
@@ -91,6 +46,73 @@
         </view>
       </view>
     </view>
+
+    <view class="edit-section skills-section" hover-class="edit-section-hover">
+      <view class="section-header">
+        <text class="section-title">我擅长</text>
+      </view>
+      <view class="section-content">
+        <view class="skills-input">
+          <input class="input" type="text" value="{{newSkill}}" bindinput="onNewSkillInput" placeholder="添加新技能" focus-class="input-focus" />
+          <text class="tags-counter {{skills.length >= 8 ? 'error' : skills.length >= 6 ? 'warning' : ''}}">{{skills.length}}/8</text>
+          <view class="add-btn" hover-class="add-btn-hover" bindtap="addSkill">添加</view>
+        </view>
+        <view class="skills-list">
+          <view class="skill-tag" wx:for="{{skills}}" wx:key="index" hover-class="skill-tag-hover">
+            {{item}}
+            <text class="delete-btn" hover-class="delete-btn-hover" bindtap="deleteSkill" data-index="{{index}}">×</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="edit-section hobbies-section" hover-class="edit-section-hover">
+      <view class="section-header">
+        <text class="section-title">我喜欢</text>
+      </view>
+      <view class="section-content">
+        <view class="skills-input">
+          <input class="input" type="text" value="{{newHobby}}" bindinput="onNewHobbyInput" placeholder="添加新爱好" focus-class="input-focus" />
+          <text class="tags-counter {{hobbies.length >= 8 ? 'error' : hobbies.length >= 6 ? 'warning' : ''}}">{{hobbies.length}}/8</text>
+          <view class="add-btn" hover-class="add-btn-hover" bindtap="addHobby">添加</view>
+        </view>
+        <view class="skills-list">
+          <view class="skill-tag" wx:for="{{hobbies}}" wx:key="index" hover-class="skill-tag-hover">
+            {{item}}
+            <text class="delete-btn" hover-class="delete-btn-hover" bindtap="deleteHobby" data-index="{{index}}">×</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="edit-section" hover-class="edit-section-hover">
+      <view class="section-header">
+        <text class="section-title">关于我</text>
+      </view>
+      <view class="section-content text-content">
+        <textarea class="textarea" value="{{about}}" bindinput="onAboutInput" placeholder="请输入个人简介" focus-class="textarea-focus" />
+      </view>
+    </view>
+
+    <!-- 自定义块列表 -->
+    <view class="edit-section" hover-class="edit-section-hover" wx:for="{{customBlocks}}" wx:key="id">
+      <view class="section-header custom-block-header">
+        <text class="section-title">{{item.title}}</text>
+        <view class="delete-custom-block" hover-class="delete-btn-hover" bindtap="deleteCustomBlock" data-id="{{item.id}}">
+          <text class="delete-icon">×</text>
+        </view>
+      </view>
+      <view class="section-content text-content">
+        <textarea class="textarea" value="{{item.content}}" bindinput="onCustomBlockInput" data-id="{{item.id}}" placeholder="请输入内容" focus-class="textarea-focus" />
+      </view>
+    </view>
+
+    <!-- 新增自定义块按钮 -->
+    <view class="add-custom-block" hover-class="add-custom-block-hover" bindtap="addCustomBlock">
+      <text class="add-icon">＋</text>
+      <text class="add-text">新增自定义内容</text>
+    </view>
+
     <view style="min-height: 160rpx; height: 160rpx; flex-shrink: 0;"></view>
   </view>
 </scroll-view> 

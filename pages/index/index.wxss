@@ -196,10 +196,10 @@ page {
 }
 
 .about-section {
-  margin-top: 20rpx; /* 确保与上方内容有间距 */
-  flex: 1; /* 使其自适应高度 */
-  display: flex; /* 添加这一行 */
-  flex-direction: column; /* 添加这一行 */
+  margin-top: 20rpx;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .about-content {
@@ -210,6 +210,32 @@ page {
   padding: 20rpx;
   background: #f9f9f9;
   border-radius: 16rpx;
+}
+
+/* 自定义块样式 */
+.custom-block-section {
+  margin-top: 20rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 复用 section-title 样式 */
+.section-title {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+/* 复用 about-content 样式，添加一些特定的调整 */
+.custom-block-section .about-content {
+  margin-bottom: 30rpx; /* 为多个自定义块之间添加间距 */
+}
+
+/* 确保最后一个自定义块没有多余的底部间距 */
+.custom-block-section:last-child .about-content {
+  margin-bottom: 0;
 }
 
 /* 编辑按钮容器样式调整 */
