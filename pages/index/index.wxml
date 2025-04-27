@@ -10,26 +10,26 @@
       <image class="avatar" src="{{userInfo.avatarUrl || '/images/avatar.png'}}" mode="aspectFill"></image>
     </view>
     <view class="info">
-      <view class="name-container">
+      <view class="name-container" wx:if="{{userInfo.name}}">
         <text class="name">{{userInfo.name}}</text>
       </view>
-      <text class="title">{{userInfo.title}}</text>
+      <text class="title" wx:if="{{userInfo.title}}">{{userInfo.title}}</text>
 
-      <view class="divider"></view>
-      <view class="contact">
-        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="phone">
+      <view class="divider" wx:if="{{userInfo.phone || userInfo.email || userInfo.address}}"></view>
+      <view class="contact" wx:if="{{userInfo.phone || userInfo.email || userInfo.address}}">
+        <view class="contact-item" hover-class="contact-item-hover" hover-stay-time="50" bindtap="copyText" data-type="phone" wx:if="{{userInfo.phone}}">
           <view class="icon-container">
             <image src="/images/wechat.png" class="contact-icon"></image>
           </view>
           <text class="contact-value">{{userInfo.phone}}</text>
         </view>
-        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="email">
+        <view class="contact-item" hover-class="contact-item-hover" hover-stay-time="50" bindtap="copyText" data-type="email" wx:if="{{userInfo.email}}">
           <view class="icon-container">
             <image src="/images/e-mail.png" class="contact-icon"></image>
           </view>
           <text class="contact-value">{{userInfo.email}}</text>
         </view>
-        <view class="contact-item" hover-class="contact-item-hover" bindtap="copyText" data-type="address">
+        <view class="contact-item" hover-class="contact-item-hover" hover-stay-time="50" bindtap="copyText" data-type="address" wx:if="{{userInfo.address}}">
           <view class="icon-container">
             <image src="/images/address.png" class="contact-icon"></image>
           </view>
@@ -37,24 +37,24 @@
         </view>
       </view>
 
-      <view class="divider"></view>
-      <view class="skills-section">
+      <view class="divider" wx:if="{{userInfo.skills.length > 0}}"></view>
+      <view class="skills-section" wx:if="{{userInfo.skills.length > 0}}">
         <text class="section-title">我擅长</text>
         <view class="skills">
           <view class="skill-tag" hover-class="skill-tag-hover" wx:for="{{userInfo.skills}}" wx:key="index">{{item}}</view>
         </view>
       </view>
 
-      <view class="divider"></view>
-      <view class="hobbies-section">
+      <view class="divider" wx:if="{{userInfo.hobbies.length > 0}}"></view>
+      <view class="hobbies-section" wx:if="{{userInfo.hobbies.length > 0}}">
         <text class="section-title">我喜欢</text>
         <view class="hobbies">
           <view class="hobby-tag" hover-class="hobby-tag-hover" wx:for="{{userInfo.hobbies}}" wx:key="index">{{item}}</view>
         </view>
       </view>
 
-      <view class="divider"></view>
-      <view class="about-section">
+      <view class="divider" wx:if="{{userInfo.about}}"></view>
+      <view class="about-section" wx:if="{{userInfo.about}}">
         <text class="section-title">关于我</text>
         <view class="about-content">
           <text>{{userInfo.about}}</text>

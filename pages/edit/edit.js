@@ -115,6 +115,11 @@ Page({
 
   // 选择头像
   chooseAvatar() {
+    // 添加轻微震动
+    wx.vibrateShort({
+      type: 'light'
+    });
+    
     wx.chooseImage({
       count: 1,
       sizeType: ['compressed'],
@@ -158,6 +163,11 @@ Page({
 
   // 添加新技能
   addSkill() {
+    // 添加轻微震动
+    wx.vibrateShort({
+      type: 'light'
+    });
+    
     if (!this.data.newSkill.trim()) {
       wx.showToast({
         title: '请输入技能名称',
@@ -174,6 +184,11 @@ Page({
 
   // 删除技能
   deleteSkill(e) {
+    // 添加轻微震动
+    wx.vibrateShort({
+      type: 'light'
+    });
+    
     const { index } = e.currentTarget.dataset;
     const skills = [...this.data.skills];
     skills.splice(index, 1);
@@ -182,6 +197,11 @@ Page({
 
   // 添加新爱好
   addHobby() {
+    // 添加轻微震动
+    wx.vibrateShort({
+      type: 'light'
+    });
+    
     if (!this.data.newHobby.trim()) {
       wx.showToast({
         title: '请输入爱好名称',
@@ -198,6 +218,11 @@ Page({
 
   // 删除爱好
   deleteHobby(e) {
+    // 添加轻微震动
+    wx.vibrateShort({
+      type: 'light'
+    });
+    
     const { index } = e.currentTarget.dataset;
     const hobbies = [...this.data.hobbies];
     hobbies.splice(index, 1);
@@ -206,6 +231,11 @@ Page({
 
   // 添加新的自定义块
   addCustomBlock() {
+    // 添加轻微震动
+    wx.vibrateShort({
+      type: 'light'
+    });
+    
     wx.showModal({
       title: '新增自定义内容',
       editable: true,
@@ -232,6 +262,11 @@ Page({
 
   // 删除自定义块
   deleteCustomBlock(e) {
+    // 添加轻微震动
+    wx.vibrateShort({
+      type: 'light'
+    });
+    
     const { id } = e.currentTarget.dataset;
     wx.showModal({
       title: '确认删除',
@@ -269,11 +304,46 @@ Page({
     });
   },
 
+  // 添加数据过滤函数
+  filterEmptyFields(data) {
+    const filteredData = {};
+    
+    // 检查基本信息
+    if (data.name?.trim()) filteredData.name = data.name;
+    if (data.title?.trim()) filteredData.title = data.title;
+    
+    // 检查联系方式
+    if (data.phone?.trim()) filteredData.phone = data.phone;
+    if (data.email?.trim()) filteredData.email = data.email;
+    if (data.address?.trim()) filteredData.address = data.address;
+    
+    // 检查数组类型的数据
+    if (data.skills?.length > 0) filteredData.skills = data.skills;
+    if (data.hobbies?.length > 0) filteredData.hobbies = data.hobbies;
+    
+    // 检查关于我
+    if (data.about?.trim()) filteredData.about = data.about;
+    
+    // 保留头像
+    if (data.avatarUrl) filteredData.avatarUrl = data.avatarUrl;
+    
+    // 检查自定义块
+    if (data.customBlocks?.length > 0) {
+      // 只保留有内容的自定义块
+      const validCustomBlocks = data.customBlocks.filter(block => block.content?.trim());
+      if (validCustomBlocks.length > 0) {
+        filteredData.customBlocks = validCustomBlocks;
+      }
+    }
+    
+    return filteredData;
+  },
+
   // 修改更新全局数据的函数
   updateGlobalData(savedImagePath) {
     return new Promise((resolve, reject) => {
       try {
-        const userInfo = {
+        let userInfo = {
           name: this.data.name,
           title: this.data.title,
           phone: this.data.phone,
@@ -283,8 +353,11 @@ Page({
           hobbies: this.data.hobbies,
           about: this.data.about,
           avatarUrl: savedImagePath,
-          customBlocks: this.data.customBlocks // 添加自定义块数据
+          customBlocks: this.data.customBlocks
         };
+
+        // 过滤空字段
+        userInfo = this.filterEmptyFields(userInfo);
 
         // 更新本地存储
         wx.setStorageSync('userInfo', userInfo);
@@ -312,6 +385,11 @@ Page({
 
   // 保存修改
   saveChanges() {
+    // 添加轻微震动
+    wx.vibrateShort({
+      type: 'light'
+    });
+    
     wx.showLoading({
       title: '保存中...',
       mask: true

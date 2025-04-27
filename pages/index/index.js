@@ -37,6 +37,11 @@ Page({
   },
 
   copyText(event) {
+    // 添加轻微震动
+    wx.vibrateShort({
+      type: 'light'
+    });
+    
     const { type } = event.currentTarget.dataset;
     const text = this.data.userInfo[type];
     wx.setClipboardData({
@@ -51,6 +56,11 @@ Page({
   },
 
   goToEdit() {
+    // 添加轻微震动
+    wx.vibrateShort({
+      type: 'light'
+    });
+    
     wx.navigateTo({
       url: '/pages/edit/edit'
     });
