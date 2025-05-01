@@ -1,9 +1,10 @@
 <!--index.wxml-->
 <navigation-bar title="个人名片" back="{{false}}" color="white" background="#4A90E2">
-  <view slot="right" class="edit-btn" hover-class="edit-btn-hover" bindtap="goToEdit">
-    <image src="/images/edit.png" mode="aspectFit" class="edit-icon"></image>
-  </view>
 </navigation-bar>
+
+<!-- 将canvas移到这里 -->
+<canvas type="2d" id="cardCanvas" style="width: 600px; height: 800px; position: fixed; left: -9999px;"></canvas>
+
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="card">
     <view class="avatar-container">
@@ -19,7 +20,7 @@
       <view class="contact" wx:if="{{userInfo.phone || userInfo.email || userInfo.address}}">
         <view class="contact-item" hover-class="contact-item-hover" hover-stay-time="50" bindtap="copyText" data-type="phone" wx:if="{{userInfo.phone}}">
           <view class="icon-container">
-            <image src="/images/wechat.png" class="contact-icon"></image>
+            <image src="/images/phone.png" class="contact-icon"></image>
           </view>
           <text class="contact-value">{{userInfo.phone}}</text>
         </view>
@@ -75,3 +76,18 @@
     </view>
   </view>
 </scroll-view>
+
+<!-- 添加底部悬浮按钮 -->
+<view class="float-buttons">
+  <view class="float-btn-group">
+    <view class="float-btn edit" hover-class="btn-hover" bindtap="goToEdit">
+      <image src="/images/edit.png" mode="aspectFit" class="btn-icon"></image>
+      <text>编辑</text>
+    </view>
+    <view class="divider-line"></view>
+    <view class="float-btn share" hover-class="btn-hover" bindtap="generateCard">
+      <image src="/images/share.png" mode="aspectFit" class="btn-icon"></image>
+      <text>分享</text>
+    </view>
+  </view>
+</view>

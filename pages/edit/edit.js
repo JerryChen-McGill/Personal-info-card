@@ -405,16 +405,27 @@ Page({
       .then(() => {
         // 3. 隐藏加载提示
         wx.hideLoading();
-        // 4. 返回上一页
-        wx.navigateBack({
-          complete: () => {
-            wx.showToast({
-              title: '保存成功',
-              icon: 'success',
-              duration: 1500
-            });
-          }
-        });
+        // 4. 添加一个小延时再返回
+        setTimeout(() => {
+          wx.navigateBack({
+            delta: 1,
+            success: () => {
+              wx.showToast({
+                title: '保存成功',
+                icon: 'success',
+                duration: 1500
+              });
+            },
+            fail: (err) => {
+              console.error('返回失败：', err);
+              wx.showToast({
+                title: '操作完成',
+                icon: 'success',
+                duration: 1500
+              });
+            }
+          });
+        }, 100);
       })
       .catch(err => {
         console.error('保存过程出错：', err);

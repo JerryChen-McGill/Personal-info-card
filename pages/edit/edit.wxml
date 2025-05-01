@@ -33,8 +33,8 @@
       </view>
       <view class="section-content">
         <view class="form-item">
-          <text class="label">微信</text>
-          <input class="input" type="text" value="{{phone}}" bindinput="onPhoneInput" placeholder="无微信则自动隐藏该信息" focus-class="input-focus" />
+          <text class="label">电话</text>
+          <input class="input" type="text" value="{{phone}}" bindinput="onPhoneInput" placeholder="无电话则自动隐藏该信息" focus-class="input-focus" />
         </view>
         <view class="form-item">
           <text class="label">邮箱</text>
