@@ -7,17 +7,17 @@
 
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="card">
-    <view class="avatar-container">
+    <view class="avatar-container" wx:if="{{!userInfo.sectionHidden || !userInfo.sectionHidden.avatar}}">
       <image class="avatar" src="{{userInfo.avatarUrl || '/images/avatar.png'}}" mode="aspectFill"></image>
     </view>
     <view class="info">
-      <view class="name-container" wx:if="{{userInfo.name}}">
+      <view class="name-container" wx:if="{{userInfo.name && (!userInfo.sectionHidden || !userInfo.sectionHidden.basic)}}">
         <text class="name">{{userInfo.name}}</text>
       </view>
-      <text class="title" wx:if="{{userInfo.title}}">{{userInfo.title}}</text>
+      <text class="title" wx:if="{{userInfo.title && (!userInfo.sectionHidden || !userInfo.sectionHidden.basic)}}">{{userInfo.title}}</text>
 
-      <view class="divider" wx:if="{{userInfo.phone || userInfo.email || userInfo.address}}"></view>
-      <view class="contact" wx:if="{{userInfo.phone || userInfo.email || userInfo.address}}">
+      <view class="divider" wx:if="{{(userInfo.phone || userInfo.email || userInfo.address) && (!userInfo.sectionHidden || !userInfo.sectionHidden.contact)}}"></view>
+      <view class="contact" wx:if="{{(userInfo.phone || userInfo.email || userInfo.address) && (!userInfo.sectionHidden || !userInfo.sectionHidden.contact)}}">
         <view class="contact-item" hover-class="contact-item-hover" hover-stay-time="50" bindtap="copyText" data-type="phone" wx:if="{{userInfo.phone}}">
           <view class="icon-container">
             <image src="/images/phone.png" class="contact-icon"></image>
@@ -38,24 +38,24 @@
         </view>
       </view>
 
-      <view class="divider" wx:if="{{userInfo.skills.length > 0}}"></view>
-      <view class="skills-section" wx:if="{{userInfo.skills.length > 0}}">
+      <view class="divider" wx:if="{{userInfo.skills.length > 0 && (!userInfo.sectionHidden || !userInfo.sectionHidden.skills)}}"></view>
+      <view class="skills-section" wx:if="{{userInfo.skills.length > 0 && (!userInfo.sectionHidden || !userInfo.sectionHidden.skills)}}">
         <text class="section-title">我擅长</text>
         <view class="skills">
           <view class="skill-tag" hover-class="skill-tag-hover" wx:for="{{userInfo.skills}}" wx:key="index">{{item}}</view>
         </view>
       </view>
 
-      <view class="divider" wx:if="{{userInfo.hobbies.length > 0}}"></view>
-      <view class="hobbies-section" wx:if="{{userInfo.hobbies.length > 0}}">
+      <view class="divider" wx:if="{{userInfo.hobbies.length > 0 && (!userInfo.sectionHidden || !userInfo.sectionHidden.hobbies)}}"></view>
+      <view class="hobbies-section" wx:if="{{userInfo.hobbies.length > 0 && (!userInfo.sectionHidden || !userInfo.sectionHidden.hobbies)}}">
         <text class="section-title">我喜欢</text>
         <view class="hobbies">
           <view class="hobby-tag" hover-class="hobby-tag-hover" wx:for="{{userInfo.hobbies}}" wx:key="index">{{item}}</view>
         </view>
       </view>
 
-      <view class="divider" wx:if="{{userInfo.about}}"></view>
-      <view class="about-section" wx:if="{{userInfo.about}}">
+      <view class="divider" wx:if="{{userInfo.about && (!userInfo.sectionHidden || !userInfo.sectionHidden.about)}}"></view>
+      <view class="about-section text-block" wx:if="{{userInfo.about && (!userInfo.sectionHidden || !userInfo.sectionHidden.about)}}">
         <text class="section-title">关于我</text>
         <view class="about-content">
           <text>{{userInfo.about}}</text>
@@ -64,13 +64,16 @@
 
       <!-- 自定义块列表 -->
       <block wx:if="{{userInfo.customBlocks && userInfo.customBlocks.length > 0}}">
-        <view class="divider"></view>
-        <view wx:for="{{userInfo.customBlocks}}" wx:key="id" class="custom-block-section">
-          <text class="section-title">{{item.title}}</text>
-          <view class="about-content">
-            <text>{{item.content}}</text>
-          </view>
-        </view>
+        <block wx:for="{{userInfo.customBlocks}}" wx:key="id">
+          <block wx:if="{{!userInfo.sectionHidden || !userInfo.sectionHidden[item.id]}}">
+            <view class="custom-block-section text-block">
+              <text class="section-title">{{item.title}}</text>
+              <view class="about-content">
+                <text>{{item.content}}</text>
+              </view>
+            </view>
+          </block>
+        </block>
       </block>
 
     </view>

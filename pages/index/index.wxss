@@ -213,9 +213,14 @@ page {
   border-radius: 16rpx;
 }
 
+/* 为文字块添加样式 */
+.text-block {
+  margin-top: 30rpx; /* 顶部间距 */
+}
+
 /* 自定义块样式 */
 .custom-block-section {
-  margin-top: 20rpx;
+  margin-top: 40rpx; /* 增加自定义块间的间距 */
   display: flex;
   flex-direction: column;
 }
@@ -231,7 +236,7 @@ page {
 
 /* 复用 about-content 样式，添加一些特定的调整 */
 .custom-block-section .about-content {
-  margin-bottom: 30rpx; /* 为多个自定义块之间添加间距 */
+  margin-bottom: 10rpx; /* 减小底部间距 */
 }
 
 /* 确保最后一个自定义块没有多余的底部间距 */

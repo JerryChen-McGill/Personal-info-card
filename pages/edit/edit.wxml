@@ -1,19 +1,30 @@
 <!--edit.wxml-->
 <navigation-bar title="编辑信息" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+
+<!-- 添加固定高度的不可滚动区域 -->
+<view class="fixed-safe-area"></view>
+
 <scroll-view class="scrollarea" scroll-y type="list" style="padding-bottom: {{scrollAreaPadding}};">
   <view class="container" style="min-height: {{containerHeight}};">
-    <view class="edit-section" hover-class="edit-section-hover">
+    <!-- 移除原来的安全区域 -->
+    <view class="edit-section {{sectionHidden.avatar ? 'section-hidden' : ''}}" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">头像</text>
+        <view class="visibility-toggle" hover-class="visibility-toggle-hover" bindtap="toggleSectionVisibility" data-section="avatar">
+          <image class="visibility-icon" src="{{sectionHidden.avatar ? '/images/eye-off.png' : '/images/eye-on.png'}}" mode="aspectFit"></image>
+        </view>
       </view>
       <view class="section-content avatar-content">
         <image class="avatar" src="{{avatarUrl || '/images/avatar.png'}}" mode="aspectFill" bindtap="chooseAvatar"></image>
       </view>
     </view>
 
-    <view class="edit-section" hover-class="edit-section-hover">
+    <view class="edit-section {{sectionHidden.basic ? 'section-hidden' : ''}}" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">基本信息</text>
+        <view class="visibility-toggle" hover-class="visibility-toggle-hover" bindtap="toggleSectionVisibility" data-section="basic">
+          <image class="visibility-icon" src="{{sectionHidden.basic ? '/images/eye-off.png' : '/images/eye-on.png'}}" mode="aspectFit"></image>
+        </view>
       </view>
       <view class="section-content">
         <view class="form-item">
@@ -27,9 +38,12 @@
       </view>
     </view>
 
-    <view class="edit-section" hover-class="edit-section-hover">
+    <view class="edit-section {{sectionHidden.contact ? 'section-hidden' : ''}}" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">联系方式</text>
+        <view class="visibility-toggle" hover-class="visibility-toggle-hover" bindtap="toggleSectionVisibility" data-section="contact">
+          <image class="visibility-icon" src="{{sectionHidden.contact ? '/images/eye-off.png' : '/images/eye-on.png'}}" mode="aspectFit"></image>
+        </view>
       </view>
       <view class="section-content">
         <view class="form-item">
@@ -47,9 +61,12 @@
       </view>
     </view>
 
-    <view class="edit-section skills-section" hover-class="edit-section-hover">
+    <view class="edit-section skills-section {{sectionHidden.skills ? 'section-hidden' : ''}}" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">我擅长</text>
+        <view class="visibility-toggle" hover-class="visibility-toggle-hover" bindtap="toggleSectionVisibility" data-section="skills">
+          <image class="visibility-icon" src="{{sectionHidden.skills ? '/images/eye-off.png' : '/images/eye-on.png'}}" mode="aspectFit"></image>
+        </view>
       </view>
       <view class="section-content">
         <view class="skills-input">
@@ -66,9 +83,12 @@
       </view>
     </view>
 
-    <view class="edit-section hobbies-section" hover-class="edit-section-hover">
+    <view class="edit-section hobbies-section {{sectionHidden.hobbies ? 'section-hidden' : ''}}" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">我喜欢</text>
+        <view class="visibility-toggle" hover-class="visibility-toggle-hover" bindtap="toggleSectionVisibility" data-section="hobbies">
+          <image class="visibility-icon" src="{{sectionHidden.hobbies ? '/images/eye-off.png' : '/images/eye-on.png'}}" mode="aspectFit"></image>
+        </view>
       </view>
       <view class="section-content">
         <view class="skills-input">
@@ -85,9 +105,12 @@
       </view>
     </view>
 
-    <view class="edit-section" hover-class="edit-section-hover">
+    <view class="edit-section {{sectionHidden.about ? 'section-hidden' : ''}}" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">关于我</text>
+        <view class="visibility-toggle" hover-class="visibility-toggle-hover" bindtap="toggleSectionVisibility" data-section="about">
+          <image class="visibility-icon" src="{{sectionHidden.about ? '/images/eye-off.png' : '/images/eye-on.png'}}" mode="aspectFit"></image>
+        </view>
       </view>
       <view class="section-content text-content">
         <textarea class="textarea" value="{{about}}" bindinput="onAboutInput" placeholder="无个人简介则自动隐藏该板块" focus-class="textarea-focus" />
@@ -95,11 +118,16 @@
     </view>
 
     <!-- 自定义块列表 -->
-    <view class="edit-section" hover-class="edit-section-hover" wx:for="{{customBlocks}}" wx:key="id">
+    <view class="edit-section {{sectionHidden[item.id] ? 'section-hidden' : ''}}" hover-class="edit-section-hover" wx:for="{{customBlocks}}" wx:key="id">
       <view class="section-header custom-block-header">
         <text class="section-title">{{item.title}}</text>
-        <view class="delete-custom-block" hover-class="delete-btn-hover" bindtap="deleteCustomBlock" data-id="{{item.id}}">
-          <text class="delete-icon">×</text>
+        <view class="section-controls">
+          <view class="visibility-toggle" hover-class="visibility-toggle-hover" bindtap="toggleSectionVisibility" data-section="{{item.id}}">
+            <image class="visibility-icon" src="{{sectionHidden[item.id] ? '/images/eye-off.png' : '/images/eye-on.png'}}" mode="aspectFit"></image>
+          </view>
+          <view class="delete-custom-block" hover-class="delete-btn-hover" bindtap="deleteCustomBlock" data-id="{{item.id}}">
+            <image class="delete-icon" src="/images/delete.png" mode="aspectFit"></image>
+          </view>
         </view>
       </view>
       <view class="section-content text-content">

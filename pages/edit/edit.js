@@ -14,7 +14,8 @@ Page({
     isNewImageSelected: false, // 添加标记，表示是否选择了新图片
     customBlocks: [], // 存储自定义块的数组
     containerHeight: 'calc(100vh + 1200rpx)', // 初始容器高度
-    scrollAreaPadding: '720rpx'  // 初始底部padding
+    scrollAreaPadding: '720rpx',  // 初始底部padding
+    sectionHidden: {} // 存储各个区域的隐藏状态
   },
 
   // 计算容器高度和底部padding
@@ -56,12 +57,31 @@ Page({
         hobbies: userInfo.hobbies || [],
         about: userInfo.about || '',
         avatarUrl: userInfo.avatarUrl || '',
-        customBlocks: userInfo.customBlocks || [] // 加载自定义块数据
+        customBlocks: userInfo.customBlocks || [], // 加载自定义块数据
+        sectionHidden: userInfo.sectionHidden || {} // 加载隐藏状态数据
       }, () => {
         // 加载完数据后更新容器高度
         this.updateContainerHeight()
       });
     }
+  },
+
+  // 切换区域的隐藏/显示状态
+  toggleSectionVisibility(e) {
+    // 添加轻微震动
+    wx.vibrateShort({
+      type: 'light'
+    });
+
+    const section = e.currentTarget.dataset.section;
+    const sectionHidden = { ...this.data.sectionHidden };
+    
+    // 切换状态
+    sectionHidden[section] = !sectionHidden[section];
+    
+    this.setData({
+      sectionHidden
+    });
   },
 
   // 输入框内容变化
@@ -336,6 +356,9 @@ Page({
       }
     }
     
+    // 保留隐藏状态设置
+    if (data.sectionHidden) filteredData.sectionHidden = data.sectionHidden;
+    
     return filteredData;
   },
 
@@ -353,7 +376,8 @@ Page({
           hobbies: this.data.hobbies,
           about: this.data.about,
           avatarUrl: savedImagePath,
-          customBlocks: this.data.customBlocks
+          customBlocks: this.data.customBlocks,
+          sectionHidden: this.data.sectionHidden
         };
 
         // 过滤空字段

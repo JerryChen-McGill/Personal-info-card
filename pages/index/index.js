@@ -199,6 +199,12 @@ Page({
 
   // 绘制头像
   async drawAvatar() {
+    // 检查头像是否隐藏
+    const hiddenSections = this.data.userInfo.sectionHidden || {};
+    if (hiddenSections.avatar) {
+      return; // 如果头像被隐藏，则不绘制
+    }
+    
     return new Promise((resolve, reject) => {
       const avatarUrl = this.data.userInfo.avatarUrl;
       const ctx = this.ctx;
@@ -326,27 +332,31 @@ Page({
     try {
       const ctx = this.ctx;
       const info = this.data.userInfo;
+      const hiddenSections = this.data.userInfo.sectionHidden || {}; // 获取隐藏区域信息
       
       // 计算新的水平中心点和文本区域宽度
       const centerX = 375;  // 画布中心点保持不变
       const textAreaWidth = 480;  // 文本区域宽度调整为面板宽度的80%
       const textStartX = centerX - textAreaWidth/2 + 40;  // 文本起始位置
       
-      // 绘制姓名
-      ctx.fillStyle = '#333333';
-      ctx.font = 'bold 36px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(info.name || '', centerX, 300);
-      
-      // 绘制职位
-      ctx.fillStyle = '#4A90E2';
-      ctx.font = '24px sans-serif';
-      ctx.fillText(info.title || '', centerX, 340);
+      // 仅当头像未隐藏时才绘制姓名和职位
+      if (!hiddenSections.basic) {
+        // 绘制姓名
+        ctx.fillStyle = '#333333';
+        ctx.font = 'bold 36px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(info.name || '', centerX, 300);
+        
+        // 绘制职位
+        ctx.fillStyle = '#4A90E2';
+        ctx.font = '24px sans-serif';
+        ctx.fillText(info.title || '', centerX, 340);
+      }
       
       let y = 380;
       
-      // 绘制联系方式
-      if (info.phone || info.email || info.address) {
+      // 绘制联系方式，仅当联系方式区域未隐藏时
+      if (!hiddenSections.contact && (info.phone || info.email || info.address)) {
         this.drawDivider(centerX, y);
         y += 40;
         
@@ -364,30 +374,30 @@ Page({
         }
       }
       
-      // 绘制技能部分
-      if (Array.isArray(info.skills) && info.skills.length > 0) {
+      // 绘制技能部分，仅当技能区域未隐藏时
+      if (!hiddenSections.skills && Array.isArray(info.skills) && info.skills.length > 0) {
         this.drawDivider(centerX, y);
         y += 40;
         y = await this.drawSkillsSection(y, textStartX, textAreaWidth);
       }
       
-      // 绘制爱好部分
-      if (Array.isArray(info.hobbies) && info.hobbies.length > 0) {
+      // 绘制爱好部分，仅当爱好区域未隐藏时
+      if (!hiddenSections.hobbies && Array.isArray(info.hobbies) && info.hobbies.length > 0) {
         this.drawDivider(centerX, y);
         y += 40;
         y = await this.drawHobbiesSection(y, textStartX, textAreaWidth);
       }
       
-      // 绘制自我介绍
-      if (info.about) {
+      // 绘制自我介绍，仅当自我介绍区域未隐藏时
+      if (!hiddenSections.about && info.about) {
         this.drawDivider(centerX, y);
         y += 40;
         y = await this.drawAbout(y, textStartX, textAreaWidth);
       }
       
-      // 绘制自定义块
+      // 绘制自定义块，每个块单独检查是否隐藏
       if (Array.isArray(info.customBlocks) && info.customBlocks.length > 0) {
-        y = await this.drawCustomBlocks(y, textStartX, textAreaWidth);
+        y = await this.drawCustomBlocks(y, textStartX, textAreaWidth, hiddenSections);
       }
       
       return y;
@@ -610,7 +620,7 @@ Page({
   },
 
   // 添加绘制自定义块的方法
-  async drawCustomBlocks(y, startX, areaWidth) {
+  async drawCustomBlocks(y, startX, areaWidth, hiddenSections) {
     const ctx = this.ctx;
     const customBlocks = this.data.userInfo.customBlocks;
     
@@ -619,11 +629,21 @@ Page({
     }
     
     let currentY = y;
+    let isFirstVisible = true; // 用于跟踪是否是第一个可见的自定义块
     
     for (const block of customBlocks) {
-      // 绘制分割线
-      this.drawDivider(375, currentY);
-      currentY += 60;  // 增加标题与分隔线的距离
+      // 检查该自定义块是否隐藏
+      if (hiddenSections[block.id]) {
+        continue; // 如果隐藏，则跳过该块的绘制
+      }
+      
+      // 只有第一个自定义块需要分隔线 (与关于我之间)
+      if (isFirstVisible) {
+        isFirstVisible = false; // 设置为false，后续块不再添加分隔线
+      } else {
+        // 不绘制分隔线，但添加一些空间
+        currentY += 30;
+      }
       
       // 绘制标题
       ctx.fillStyle = '#333333';
@@ -689,7 +709,7 @@ Page({
         textY += lineHeight;
       });
       
-      currentY = textY + textPadding + 40;  // 适当调整底部间距
+      currentY = textY + textPadding + 30;  // 适当调整底部间距
     }
     
     return currentY;
