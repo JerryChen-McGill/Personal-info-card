@@ -28,7 +28,7 @@
       </view>
       <view class="section-content">
         <view class="form-item">
-          <text class="label">姓名</text>
+          <text class="label">称呼</text>
           <input class="input" type="text" value="{{name}}" bindinput="onNameInput" placeholder="无姓名则自动隐藏该信息" focus-class="input-focus" />
         </view>
         <view class="form-item">
@@ -38,6 +38,7 @@
       </view>
     </view>
 
+    <!-- 注释掉联系方式部分
     <view class="edit-section {{sectionHidden.contact ? 'section-hidden' : ''}}" hover-class="edit-section-hover">
       <view class="section-header">
         <text class="section-title">联系方式</text>
@@ -60,6 +61,7 @@
         </view>
       </view>
     </view>
+    -->
 
     <view class="edit-section skills-section {{sectionHidden.skills ? 'section-hidden' : ''}}" hover-class="edit-section-hover">
       <view class="section-header">

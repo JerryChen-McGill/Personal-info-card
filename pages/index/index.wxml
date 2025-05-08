@@ -16,6 +16,7 @@
       </view>
       <text class="title" wx:if="{{userInfo.title && (!userInfo.sectionHidden || !userInfo.sectionHidden.basic)}}">{{userInfo.title}}</text>
 
+      <!-- 注释掉联系方式部分
       <view class="divider" wx:if="{{(userInfo.phone || userInfo.email || userInfo.address) && (!userInfo.sectionHidden || !userInfo.sectionHidden.contact)}}"></view>
       <view class="contact" wx:if="{{(userInfo.phone || userInfo.email || userInfo.address) && (!userInfo.sectionHidden || !userInfo.sectionHidden.contact)}}">
         <view class="contact-item" hover-class="contact-item-hover" hover-stay-time="50" bindtap="copyText" data-type="phone" wx:if="{{userInfo.phone}}">
@@ -37,6 +38,7 @@
           <text class="contact-value">{{userInfo.address}}</text>
         </view>
       </view>
+      -->
 
       <view class="divider" wx:if="{{userInfo.skills.length > 0 && (!userInfo.sectionHidden || !userInfo.sectionHidden.skills)}}"></view>
       <view class="skills-section" wx:if="{{userInfo.skills.length > 0 && (!userInfo.sectionHidden || !userInfo.sectionHidden.skills)}}">

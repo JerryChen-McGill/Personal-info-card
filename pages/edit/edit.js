@@ -2,9 +2,12 @@ Page({
   data: {
     name: '',
     title: '',
+    // 注释掉联系方式相关数据
+    /*
     phone: '',
     email: '',
     address: '',
+    */
     skills: [],
     hobbies: [],
     newSkill: '',
@@ -50,9 +53,12 @@ Page({
       this.setData({
         name: userInfo.name || '',
         title: userInfo.title || '',
+        // 注释掉联系方式相关数据加载
+        /*
         phone: userInfo.phone || '',
         email: userInfo.email || '',
         address: userInfo.address || '',
+        */
         skills: userInfo.skills || [],
         hobbies: userInfo.hobbies || [],
         about: userInfo.about || '',
@@ -97,6 +103,8 @@ Page({
     });
   },
 
+  // 注释掉联系方式相关的输入处理函数
+  /*
   onPhoneInput(e) {
     this.setData({
       phone: e.detail.value
@@ -114,6 +122,7 @@ Page({
       address: e.detail.value
     });
   },
+  */
 
   onNewSkillInput(e) {
     this.setData({
@@ -324,7 +333,7 @@ Page({
     });
   },
 
-  // 添加数据过滤函数
+  // 修改数据过滤函数，注释掉联系方式相关部分
   filterEmptyFields(data) {
     const filteredData = {};
     
@@ -332,10 +341,13 @@ Page({
     if (data.name?.trim()) filteredData.name = data.name;
     if (data.title?.trim()) filteredData.title = data.title;
     
+    // 注释掉联系方式相关检查
+    /*
     // 检查联系方式
     if (data.phone?.trim()) filteredData.phone = data.phone;
     if (data.email?.trim()) filteredData.email = data.email;
     if (data.address?.trim()) filteredData.address = data.address;
+    */
     
     // 检查数组类型的数据
     if (data.skills?.length > 0) filteredData.skills = data.skills;
@@ -362,16 +374,19 @@ Page({
     return filteredData;
   },
 
-  // 修改更新全局数据的函数
+  // 修改更新全局数据的函数，注释掉联系方式相关部分
   updateGlobalData(savedImagePath) {
     return new Promise((resolve, reject) => {
       try {
         let userInfo = {
           name: this.data.name,
           title: this.data.title,
+          // 注释掉联系方式相关数据
+          /*
           phone: this.data.phone,
           email: this.data.email,
           address: this.data.address,
+          */
           skills: this.data.skills,
           hobbies: this.data.hobbies,
           about: this.data.about,
