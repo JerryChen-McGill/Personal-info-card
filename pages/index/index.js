@@ -7,8 +7,8 @@ Page({
       phone: '',
       email: '',
       address: '',
-      skills: ['吃', '睡', '走神'],
-      hobbies: ['走神', '睡', '吃'],
+      skills: ['吃', '睡', '玩'],
+      hobbies: ['玩', '睡', '吃'],
       about: '这个人很懒，什么介绍也没留下。',
       avatarUrl: '/images/avatar.png'
     },
@@ -169,28 +169,24 @@ Page({
     }
   },
 
-  // 修改 drawBackground 方法，调整面板宽度
+  // 修改 drawBackground 方法，名片主体全画布宽高，圆角36px，带阴影，底色#f5f7fa，无留白
   drawBackground(contentHeight) {
     const ctx = this.ctx;
-    
-    // 计算面板宽度（画布宽度的80%）
     const canvasWidth = 750;
-    const panelWidth = Math.floor(canvasWidth * 0.8); // 600px
-    const panelX = Math.floor((canvasWidth - panelWidth) / 2); // 居中显示
-    
-    // 1. 绘制页面背景
+
+    // 1. 绘制画布底色
     ctx.fillStyle = '#f5f7fa';
     ctx.fillRect(0, 0, canvasWidth, contentHeight);
-    
+
     // 2. 设置卡片阴影
     ctx.fillStyle = '#ffffff';
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
-    ctx.shadowBlur = 20;
-    ctx.shadowOffsetY = 4;
-    
-    // 3. 使用通用方法绘制卡片主体
-    this.drawRoundRectWithCompat(ctx, panelX, 40, panelWidth, contentHeight - 80, 30);
-    
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.12)';
+    ctx.shadowBlur = 24;
+    ctx.shadowOffsetY = 8;
+
+    // 3. 绘制名片主体（全画布宽高，圆角36px）
+    this.drawRoundRectWithCompat(ctx, 0, 0, canvasWidth, contentHeight, 36);
+
     // 4. 重置阴影
     ctx.shadowColor = 'transparent';
     ctx.shadowBlur = 0;
@@ -257,51 +253,61 @@ Page({
     
     if (!about) return y;
     
-    // 增加标题与分隔线的距离
     y += 20;
     
-    // 绘制标题
+    // 绘制标题，增大字体
     ctx.fillStyle = '#333333';
-    ctx.font = 'bold 28px sans-serif';
+    ctx.font = 'bold 32px sans-serif';  // 改为32px
     ctx.textAlign = 'center';
     ctx.fillText('关于我', 375, y);
     
     // 计算文本区域的位置和大小
-    const textStartY = y + 50;
-    const textPadding = 20;
-    // 计算一个汉字的宽度
+    const textStartY = y + 60;  // 增加与标题的间距
+    const textPadding = 30;  // 增加内边距
     const charWidth = ctx.measureText('我').width;
-    const textAreaWidth = 576 - (charWidth * 2);  // 减少宽度，为两边各留出一个汉字的空间
-    const textAreaStartX = 375 - textAreaWidth/2;  // 居中
-    const maxWidth = textAreaWidth - 2 * textPadding;  // 考虑内边距
+    const textAreaWidth = 650;  // 增加文本区域宽度
+    const textAreaStartX = 375 - textAreaWidth/2;
+    const maxWidth = textAreaWidth - 2 * textPadding;
     
-    // 设置文本样式用于计算
+    // 设置文本样式
     ctx.fillStyle = '#666666';
-    ctx.font = '20px sans-serif';
+    ctx.font = '28px sans-serif';  // 再调大一点
     ctx.textAlign = 'left';
     
-    // 文本换行处理和高度计算
-    const words = about.split('');
+    // 【修改】文本换行处理和高度计算，保留用户输入的换行符
     let lines = [];
-    let currentLine = '';
     
-    // 计算实际需要的行数和高度
-    for (let i = 0; i < words.length; i++) {
-      const testLine = currentLine + words[i];
-      const metrics = ctx.measureText(testLine);
-      
-      if (metrics.width > maxWidth && currentLine) {
-        lines.push(currentLine);
-        currentLine = words[i];
+    // 首先按用户输入的换行符分割
+    const paragraphs = about.split('\n');
+    
+    // 对每个段落进行宽度限制处理
+    paragraphs.forEach(paragraph => {
+      if (paragraph === '') {
+        // 如果是空行，直接添加，保留用户的空行
+        lines.push('');
       } else {
-        currentLine = testLine;
+        // 处理文本宽度限制
+        const words = paragraph.split('');
+        let currentLine = '';
+        
+        for (let i = 0; i < words.length; i++) {
+          const testLine = currentLine + words[i];
+          const metrics = ctx.measureText(testLine);
+          
+          if (metrics.width > maxWidth && currentLine) {
+            lines.push(currentLine);
+            currentLine = words[i];
+          } else {
+            currentLine = testLine;
+          }
+        }
+        if (currentLine) {
+          lines.push(currentLine);
+        }
       }
-    }
-    if (currentLine) {
-      lines.push(currentLine);
-    }
+    });
     
-    const lineHeight = 30;
+    const lineHeight = 42;  // 再调大一点
     const textHeight = lines.length * lineHeight;
     
     // 绘制背景
@@ -311,8 +317,8 @@ Page({
       textAreaStartX,
       textStartY - textPadding,
       textAreaWidth,
-      textHeight + textPadding * 2,  // 只使用实际需要的高度
-      16
+      textHeight + textPadding * 2,
+      20  // 增加圆角
     );
     
     // 绘制文本
@@ -320,40 +326,43 @@ Page({
     let currentY = textStartY + textPadding;
     
     lines.forEach(line => {
-      ctx.fillText(line, textAreaStartX + textPadding, currentY);
+      // 如果不是空行才绘制文本，空行只占位
+      if (line !== '') {
+        ctx.fillText(line, textAreaStartX + textPadding, currentY);
+      }
       currentY += lineHeight;
     });
     
-    return currentY + textPadding + 40;  // 适当调整底部间距
+    return currentY + textPadding + 50;  // 增加底部间距
   },
 
-  // 修改 drawInfo 方法，添加自定义块绘制
+  // 修改 drawInfo 方法，调整文本区域宽度和字体大小
   async drawInfo() {
     try {
       const ctx = this.ctx;
       const info = this.data.userInfo;
-      const hiddenSections = this.data.userInfo.sectionHidden || {}; // 获取隐藏区域信息
+      const hiddenSections = this.data.userInfo.sectionHidden || {};
       
-      // 计算新的水平中心点和文本区域宽度
+      // 修改：调整文本区域宽度和起始位置
       const centerX = 375;  // 画布中心点保持不变
-      const textAreaWidth = 480;  // 文本区域宽度调整为面板宽度的80%
-      const textStartX = centerX - textAreaWidth/2 + 40;  // 文本起始位置
+      const textAreaWidth = 650;  // 增加文本区域宽度
+      const textStartX = centerX - textAreaWidth/2 + 50;  // 调整文本起始位置
       
       // 仅当头像未隐藏时才绘制姓名和职位
       if (!hiddenSections.basic) {
-        // 绘制姓名
+        // 绘制姓名，增大字体，并下移让头像和姓名有间距
         ctx.fillStyle = '#333333';
-        ctx.font = 'bold 36px sans-serif';
+        ctx.font = 'bold 42px sans-serif';  // 增大字体
         ctx.textAlign = 'center';
-        ctx.fillText(info.name || '', centerX, 300);
+        ctx.fillText(info.name || '', centerX, 340); // 下移40px
         
-        // 绘制职位
-        ctx.fillStyle = '#4A90E2';
-        ctx.font = '24px sans-serif';
-        ctx.fillText(info.title || '', centerX, 340);
+        // 绘制职位，增大字体
+        ctx.fillStyle = '#333333';  // 从#4A90E2改为#333333
+        ctx.font = '28px sans-serif';  // 增大字体
+        ctx.fillText(info.title || '', centerX, 380);  // 跟随姓名下移
       }
       
-      let y = 380;
+      let y = 430;  // 跟随整体下移
       
       // 绘制联系方式，仅当联系方式区域未隐藏时
       if (!hiddenSections.contact && (info.phone || info.email || info.address)) {
@@ -378,20 +387,33 @@ Page({
       if (!hiddenSections.skills && Array.isArray(info.skills) && info.skills.length > 0) {
         this.drawDivider(centerX, y);
         y += 40;
+        // 【修改】先清除这块区域，确保不受前面内容影响
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, y, 750, 300);
         y = await this.drawSkillsSection(y, textStartX, textAreaWidth);
       }
       
       // 绘制爱好部分，仅当爱好区域未隐藏时
       if (!hiddenSections.hobbies && Array.isArray(info.hobbies) && info.hobbies.length > 0) {
-        this.drawDivider(centerX, y);
-        y += 40;
+        // 【修改】减小额外间距
+        y += 20; // 【修改】减小额外间距，从50改为20
+        
+        // 【修改】先清除这块区域，确保不受前面内容影响
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, y, 750, 300);
+        
         y = await this.drawHobbiesSection(y, textStartX, textAreaWidth);
       }
       
       // 绘制自我介绍，仅当自我介绍区域未隐藏时
       if (!hiddenSections.about && info.about) {
-        this.drawDivider(centerX, y);
-        y += 40;
+        // 【修改】减小额外间距
+        y += 20; // 【修改】减小额外间距，从50改为20
+        
+        // 【修改】先清除这块区域，确保不受前面内容影响
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, y, 750, 300);
+        
         y = await this.drawAbout(y, textStartX, textAreaWidth);
       }
       
@@ -459,29 +481,30 @@ Page({
     }
   },
 
-  // 修改 drawSkillsSection 方法，调整标题居中
+  // 修改 drawSkillsSection 方法，添加灰色背景框
   drawSkillsSection(y, startX, areaWidth) {
     const ctx = this.ctx;
     const skills = this.data.userInfo.skills;
     
-    // 增加标题与分隔线的距离
-    y += 20;
+    // 增加初始间距
+    y += 50;
     
-    // 绘制标题（居中）
+    // 绘制标题（居中），增大字体
     ctx.fillStyle = '#333333';
-    ctx.font = 'bold 28px sans-serif';
+    ctx.font = 'bold 32px sans-serif';  // 增大字体
     ctx.textAlign = 'center';
     ctx.fillText('我擅长', 375, y);
     
-    // 计算每个标签的宽度
+    // 计算每个标签的宽度，增加内边距
     const tagWidths = skills.map(skill => ({
       text: skill,
-      width: ctx.measureText(skill).width + 40  // 文字宽度加上内边距
+      width: ctx.measureText(skill).width + 30  // 减小内边距，从60改为40
     }));
     
-    let currentY = y + 50;
-    const spacing = 20;  // 标签之间的间距
-    const maxLineWidth = 576 - 80;  // 可用宽度（减去左右边距）
+    // 修改这里，让标题与内容的间距与"关于我"保持一致
+    let currentY = y + 80;  // 【修改】增加更多间距，从60改为80
+    const spacing = 30;  // 增加标签间距
+    const maxLineWidth = 650;  // 增加最大行宽
     let currentLine = [];
     let currentLineWidth = 0;
     
@@ -503,34 +526,52 @@ Page({
       lines.push(currentLine);
     }
     
+    // 计算背景框的高度
+    const lineHeight = 80;  // 【修改】增加行高，从70改为80
+    const padding = 40;  // 内边距
+    const backgroundHeight = lines.length * lineHeight + padding * 2;
+    
+    // 绘制背景框，调整位置确保不会与标题重叠
+    ctx.fillStyle = '#fcfcfc';
+    // 修改背景框宽度，使之与其他板块一致
+    const bgWidth = 650; // 【修改】统一背景框宽度为650px，与其他板块保持一致
+    this.drawRoundRectWithCompat(
+      ctx,
+      375 - bgWidth/2,  // 【修改】使用固定宽度，保证所有板块宽度一致
+      currentY - 15 - padding,  // 【修改】将背景框的起始Y坐标下移，从-25改为-15
+      bgWidth,  // 【修改】使用固定宽度
+      backgroundHeight,
+      20
+    );
+    
     // 绘制每一行标签
     lines.forEach(line => {
-      // 计算这一行的总宽度
       const lineWidth = line.reduce((sum, tag, index) => 
         sum + tag.width + (index > 0 ? spacing : 0), 0);
       
-      // 计算这一行的起始x坐标（居中）
       let currentX = 375 - lineWidth / 2;
       
-      // 绘制这一行的所有标签
       line.forEach((tag, index) => {
-        // 使用通用方法绘制标签背景
+        // 使用通用方法绘制标签背景，增加高度
         ctx.fillStyle = '#f0f4ff';
-        this.drawRoundRectWithCompat(ctx, currentX, currentY - 20, tag.width, 40, 20);
+        this.drawRoundRectWithCompat(ctx, currentX, currentY - 15, tag.width, 50, 25);  // 【修改】标签背景也下移，从-25改为-15
         
-        // 绘制标签文字
-        ctx.fillStyle = '#4A90E2';
-        ctx.font = '20px sans-serif';
+        // 绘制标签文字，增大字体
+        ctx.fillStyle = '#333333';
+        ctx.font = '28px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(tag.text, currentX + tag.width/2, currentY + 8);
+        // 调整文字垂直位置以确保真正居中
+        // 在Canvas中，文本基线默认是alphabetic，我们需要调整Y坐标使文本垂直居中
+        ctx.fillText(tag.text, currentX + tag.width/2, currentY + 18);  // 【修改】进一步调整文字位置，从+15改为+18，确保完全垂直居中
         
         currentX += tag.width + spacing;
       });
       
-      currentY += 50;  // 移动到下一行
+      currentY += lineHeight;
     });
 
-    return currentY + 30;  // 返回最终的y坐标
+    // 返回下一个板块应该开始的Y坐标
+    return currentY + 40;  // 【修改】减小底部间距，从60改为40，让"我擅长"和"我喜欢"间隔更接近
   },
 
   // 绘制图标的通用方法
@@ -545,29 +586,30 @@ Page({
     });
   },
 
-  // 修改 drawHobbiesSection 方法，调整标题居中
+  // 修改 drawHobbiesSection 方法，添加灰色背景框
   drawHobbiesSection(y, startX, areaWidth) {
     const ctx = this.ctx;
     const hobbies = this.data.userInfo.hobbies;
     
-    // 增加标题与分隔线的距离
-    y += 20;
+    // 【修改】减小与前一个板块的间距
+    y += 40;  // 【修改】从60改为40，减小与前一个板块的间距
     
-    // 绘制标题（居中）
+    // 绘制标题（居中），增大字体
     ctx.fillStyle = '#333333';
-    ctx.font = 'bold 28px sans-serif';
+    ctx.font = 'bold 32px sans-serif';  // 增大字体
     ctx.textAlign = 'center';
     ctx.fillText('我喜欢', 375, y);
     
-    // 计算每个标签的宽度
+    // 计算每个标签的宽度，增加内边距
     const tagWidths = hobbies.map(hobby => ({
       text: hobby,
-      width: ctx.measureText(hobby).width + 40  // 文字宽度加上内边距
+      width: ctx.measureText(hobby).width + 30  // 减小内边距，从60改为40
     }));
     
-    let currentY = y + 50;
-    const spacing = 20;  // 标签之间的间距
-    const maxLineWidth = 576 - 80;  // 可用宽度（减去左右边距）
+    // 与"关于我"保持一致的间距
+    let currentY = y + 80;  // 【修改】增加更多间距，从60改为80
+    const spacing = 30;  // 增加标签间距
+    const maxLineWidth = 650;  // 增加最大行宽
     let currentLine = [];
     let currentLineWidth = 0;
     
@@ -589,37 +631,55 @@ Page({
       lines.push(currentLine);
     }
     
+    // 计算背景框的高度
+    const lineHeight = 80;  // 【修改】增加行高，从70改为80
+    const padding = 40;  // 内边距
+    const backgroundHeight = lines.length * lineHeight + padding * 2;
+    
+    // 绘制背景框，调整位置确保不会与标题重叠
+    ctx.fillStyle = '#fcfcfc';
+    // 修改背景框宽度，使之与其他板块一致
+    const bgWidth = 650; // 【修改】统一背景框宽度为650px，与其他板块保持一致
+    this.drawRoundRectWithCompat(
+      ctx,
+      375 - bgWidth/2,  // 【修改】使用固定宽度，保证所有板块宽度一致
+      currentY - 15 - padding,  // 【修改】将背景框的起始Y坐标下移，从-25改为-15
+      bgWidth,  // 【修改】使用固定宽度
+      backgroundHeight,
+      20
+    );
+    
     // 绘制每一行标签
     lines.forEach(line => {
-      // 计算这一行的总宽度
       const lineWidth = line.reduce((sum, tag, index) => 
         sum + tag.width + (index > 0 ? spacing : 0), 0);
       
-      // 计算这一行的起始x坐标（居中）
       let currentX = 375 - lineWidth / 2;
       
-      // 绘制这一行的所有标签
       line.forEach((tag, index) => {
-        // 使用通用方法绘制标签背景
+        // 使用通用方法绘制标签背景，增加高度
         ctx.fillStyle = '#f0f4ff';
-        this.drawRoundRectWithCompat(ctx, currentX, currentY - 20, tag.width, 40, 20);
+        this.drawRoundRectWithCompat(ctx, currentX, currentY - 15, tag.width, 50, 25);  // 【修改】标签背景也下移，从-25改为-15
         
-        // 绘制标签文字
-        ctx.fillStyle = '#4A90E2';
-        ctx.font = '20px sans-serif';
+        // 绘制标签文字，增大字体
+        ctx.fillStyle = '#333333';
+        ctx.font = '28px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(tag.text, currentX + tag.width/2, currentY + 8);
+        // 调整文字垂直位置以确保真正居中
+        // 在Canvas中，文本基线默认是alphabetic，我们需要调整Y坐标使文本垂直居中
+        ctx.fillText(tag.text, currentX + tag.width/2, currentY + 18);  // 【修改】进一步调整文字位置，从+15改为+18，确保完全垂直居中
         
         currentX += tag.width + spacing;
       });
       
-      currentY += 50;  // 移动到下一行
+      currentY += lineHeight;
     });
 
-    return currentY + 30;  // 返回最终的y坐标
+    // 返回下一个板块应该开始的Y坐标
+    return currentY + 60;  // 【修改】减小底部间距，从100改为60，与正常板块间距保持一致
   },
 
-  // 添加绘制自定义块的方法
+  // 修改自定义块方法，添加对换行符的支持
   async drawCustomBlocks(y, startX, areaWidth, hiddenSections) {
     const ctx = this.ctx;
     const customBlocks = this.data.userInfo.customBlocks;
@@ -647,46 +707,56 @@ Page({
       
       // 绘制标题
       ctx.fillStyle = '#333333';
-      ctx.font = 'bold 28px sans-serif';
+      ctx.font = 'bold 32px sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(block.title, 375, currentY);
       
       // 计算文本区域的位置和大小
-      const textStartY = currentY + 50;
-      const textPadding = 20;
-      // 计算一个汉字的宽度
-      const charWidth = ctx.measureText('我').width;
-      const textAreaWidth = 576 - (charWidth * 2);  // 减少宽度，为两边各留出一个汉字的空间
+      const textStartY = currentY + 60;  // 增加与标题的间距
+      const textPadding = 30;  // 增加内边距
+      const textAreaWidth = 650;  // 统一为650px，与关于我一致
       const textAreaStartX = 375 - textAreaWidth/2;  // 居中
       const maxWidth = textAreaWidth - 2 * textPadding;  // 考虑内边距
       
       // 设置文本样式用于计算
       ctx.fillStyle = '#666666';
-      ctx.font = '20px sans-serif';
+      ctx.font = '28px sans-serif';
       ctx.textAlign = 'left';
       
-      // 文本换行处理和高度计算
-      const words = block.content.split('');
+      // 【修改】文本换行处理和高度计算，保留用户输入的换行符
       let lines = [];
-      let currentLine = '';
       
-      // 计算实际需要的行数和高度
-      for (let i = 0; i < words.length; i++) {
-        const testLine = currentLine + words[i];
-        const metrics = ctx.measureText(testLine);
-        
-        if (metrics.width > maxWidth && currentLine) {
-          lines.push(currentLine);
-          currentLine = words[i];
+      // 首先按用户输入的换行符分割
+      const paragraphs = block.content.split('\n');
+      
+      // 对每个段落进行宽度限制处理
+      paragraphs.forEach(paragraph => {
+        if (paragraph === '') {
+          // 如果是空行，直接添加，保留用户的空行
+          lines.push('');
         } else {
-          currentLine = testLine;
+          // 处理文本宽度限制
+          const words = paragraph.split('');
+          let currentLine = '';
+          
+          for (let i = 0; i < words.length; i++) {
+            const testLine = currentLine + words[i];
+            const metrics = ctx.measureText(testLine);
+            
+            if (metrics.width > maxWidth && currentLine) {
+              lines.push(currentLine);
+              currentLine = words[i];
+            } else {
+              currentLine = testLine;
+            }
+          }
+          if (currentLine) {
+            lines.push(currentLine);
+          }
         }
-      }
-      if (currentLine) {
-        lines.push(currentLine);
-      }
+      });
       
-      const lineHeight = 30;
+      const lineHeight = 42;  // 行高
       const textHeight = lines.length * lineHeight;
       
       // 绘制背景
@@ -696,8 +766,8 @@ Page({
         textAreaStartX,
         textStartY - textPadding,
         textAreaWidth,
-        textHeight + textPadding * 2,  // 只使用实际需要的高度
-        16
+        textHeight + textPadding * 2,
+        20  // 圆角
       );
       
       // 绘制文本
@@ -705,11 +775,14 @@ Page({
       let textY = textStartY + textPadding;
       
       lines.forEach(line => {
-        ctx.fillText(line, textAreaStartX + textPadding, textY);
+        // 如果不是空行才绘制文本，空行只占位
+        if (line !== '') {
+          ctx.fillText(line, textAreaStartX + textPadding, textY);
+        }
         textY += lineHeight;
       });
       
-      currentY = textY + textPadding + 30;  // 适当调整底部间距
+      currentY = textY + textPadding + 50;  // 增加底部间距
     }
     
     return currentY;

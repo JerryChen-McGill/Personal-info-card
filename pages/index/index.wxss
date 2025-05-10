@@ -86,7 +86,7 @@ page {
 
 .title {
   font-size: 32rpx;
-  color: #4A90E2;
+  color: #333333;
   font-weight: 500;
   margin-bottom: 20rpx;
 }
@@ -159,19 +159,14 @@ page {
   margin-top: 20rpx;
 }
 
-.section-title {
-  font-size: 32rpx;
-  color: #333;
-  font-weight: bold;
-  margin-bottom: 20rpx;
-  display: block;
-}
-
 .skills {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  /* 替换 gap: 20rpx */
+  background: #fcfcfc;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-top: 20rpx;
 }
 
 /* 为技能标签添加间距 */
@@ -181,7 +176,7 @@ page {
 
 .skill-tag {
   background: #f0f4ff;
-  color: #4A90E2;
+  color: #333333;
   padding: 12rpx 32rpx;
   border-radius: 30rpx;
   font-size: 26rpx;
@@ -252,7 +247,10 @@ page {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  /* 替换 gap: 20rpx */
+  background: #fcfcfc;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-top: 20rpx;
 }
 
 /* 为爱好标签添加间距 */
@@ -262,7 +260,7 @@ page {
 
 .hobby-tag {
   background: #f0f4ff;
-  color: #4A90E2;
+  color: #333333;
   padding: 12rpx 32rpx;
   border-radius: 30rpx;
   font-size: 26rpx;

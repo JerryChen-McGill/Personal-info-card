@@ -48,7 +48,6 @@
         </view>
       </view>
 
-      <view class="divider" wx:if="{{userInfo.hobbies.length > 0 && (!userInfo.sectionHidden || !userInfo.sectionHidden.hobbies)}}"></view>
       <view class="hobbies-section" wx:if="{{userInfo.hobbies.length > 0 && (!userInfo.sectionHidden || !userInfo.sectionHidden.hobbies)}}">
         <text class="section-title">我喜欢</text>
         <view class="hobbies">
@@ -56,7 +55,6 @@
         </view>
       </view>
 
-      <view class="divider" wx:if="{{userInfo.about && (!userInfo.sectionHidden || !userInfo.sectionHidden.about)}}"></view>
       <view class="about-section text-block" wx:if="{{userInfo.about && (!userInfo.sectionHidden || !userInfo.sectionHidden.about)}}">
         <text class="section-title">关于我</text>
         <view class="about-content">
