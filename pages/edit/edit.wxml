@@ -137,13 +137,38 @@
       </view>
     </view>
 
+    <!-- 新增：微信二维码信息块 -->
+    <view class="edit-section {{sectionHidden.wechatQr ? 'section-hidden' : ''}}" hover-class="edit-section-hover">
+      <view class="section-header">
+        <text class="section-title">微信</text>
+        <view class="visibility-toggle" hover-class="visibility-toggle-hover" bindtap="toggleSectionVisibility" data-section="wechatQr">
+          <image class="visibility-icon" src="{{sectionHidden.wechatQr ? '/images/eye-off.png' : '/images/eye-on.png'}}" mode="aspectFit"></image>
+        </view>
+      </view>
+      <view class="section-content avatar-content">
+        <image class="qr-edit-img" src="{{wechatQr || '/images/qr-placeholder.png'}}" mode="aspectFit" bindtap="chooseWechatQr"></image>
+      </view>
+    </view>
+
+    <!-- 新增：个人作品二维码信息块 -->
+    <view class="edit-section {{sectionHidden.worksQr ? 'section-hidden' : ''}}" hover-class="edit-section-hover">
+      <view class="section-header">
+        <text class="section-title">其他账号</text>
+         <view class="visibility-toggle" hover-class="visibility-toggle-hover" bindtap="toggleSectionVisibility" data-section="worksQr">
+          <image class="visibility-icon" src="{{sectionHidden.worksQr ? '/images/eye-off.png' : '/images/eye-on.png'}}" mode="aspectFit"></image>
+        </view>
+      </view>
+      <view class="section-content avatar-content">
+        <image class="qr-edit-img" src="{{worksQr || '/images/qr-placeholder.png'}}" mode="aspectFit" bindtap="chooseWorksQr"></image>
+      </view>
+    </view>
+
     <!-- 新增自定义块按钮 -->
     <view class="add-custom-block" hover-class="add-custom-block-hover" bindtap="addCustomBlock">
       <text class="add-icon">＋</text>
       <text class="add-text">新增自定义内容</text>
     </view>
-
-    <view style="min-height: 160rpx; height: 160rpx; flex-shrink: 0;"></view>
+    <view style="min-height: 240rpx; height: 240rpx; flex-shrink: 0;"></view>
   </view>
 </scroll-view> 
 <view class="save-btn" hover-class="save-btn-hover" bindtap="saveChanges">保存修改</view>

@@ -15,10 +15,22 @@ Page({
     about: '',
     avatarUrl: '',
     isNewImageSelected: false, // 添加标记，表示是否选择了新图片
+    isNewWechatQrSelected: false, // 新增：微信二维码是否新选
+    isNewWorksQrSelected: false,  // 新增：个人作品二维码是否新选
     customBlocks: [], // 存储自定义块的数组
     containerHeight: 'calc(100vh + 1200rpx)', // 初始容器高度
     scrollAreaPadding: '720rpx',  // 初始底部padding
-    sectionHidden: {} // 存储各个区域的隐藏状态
+    sectionHidden: {
+      avatar: false,
+      basic: false,
+      skills: false,
+      hobbies: false,
+      about: false,
+      wechatQr: false, // 新增：微信二维码隐藏状态
+      worksQr: false   // 新增：作品二维码隐藏状态
+    }, // 存储各个区域的隐藏状态
+    wechatQr: '', // 新增：微信二维码图片路径
+    worksQr: ''   // 新增：个人作品二维码图片路径
   },
 
   // 计算容器高度和底部padding
@@ -27,10 +39,12 @@ Page({
     const customBlockHeight = 466 // 每个自定义块的精确高度
     const basePadding = 720 // 基础底部padding
     const blockPadding = 50 // 每个块额外需要的padding调整值
-    
-    const totalHeight = baseHeight + (this.data.customBlocks.length * customBlockHeight)
-    const totalPadding = basePadding + (this.data.customBlocks.length * blockPadding)
-    
+    const qrBlockHeight = 420 // 每个二维码块的高度（含间距）
+    const qrBlockCount = 2 // 二维码块数量
+
+    const totalHeight = baseHeight + (this.data.customBlocks.length * customBlockHeight) + (qrBlockCount * qrBlockHeight)
+    const totalPadding = basePadding + (this.data.customBlocks.length * blockPadding) + (qrBlockCount * 120) // padding适当小于内容高度
+
     return {
       containerHeight: `calc(100vh + ${totalHeight}rpx)`,
       scrollAreaPadding: `${totalPadding}rpx`
@@ -64,7 +78,9 @@ Page({
         about: userInfo.about || '',
         avatarUrl: userInfo.avatarUrl || '',
         customBlocks: userInfo.customBlocks || [], // 加载自定义块数据
-        sectionHidden: userInfo.sectionHidden || {} // 加载隐藏状态数据
+        sectionHidden: userInfo.sectionHidden || {}, // 加载隐藏状态数据
+        wechatQr: userInfo.wechatQr || '', // 加载微信二维码数据
+        worksQr: userInfo.worksQr || ''    // 加载个人作品二维码数据
       }, () => {
         // 加载完数据后更新容器高度
         this.updateContainerHeight()
@@ -163,27 +179,60 @@ Page({
     });
   },
 
-  // 保存图片到本地
-  saveImageToLocal() {
+  // 选择微信二维码
+  chooseWechatQr() {
+    wx.vibrateShort({ type: 'light' });
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        const tempFilePath = res.tempFilePaths[0];
+        console.log('选择微信二维码成功，临时路径：', tempFilePath);
+        this.setData({ wechatQr: tempFilePath, isNewWechatQrSelected: true }, () => {
+          console.log('setData后 wechatQr:', this.data.wechatQr, 'isNewWechatQrSelected:', this.data.isNewWechatQrSelected);
+        });
+      }
+    });
+  },
+
+  // 选择个人作品二维码
+  chooseWorksQr() {
+    wx.vibrateShort({ type: 'light' });
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        const tempFilePath = res.tempFilePaths[0];
+        console.log('选择作品二维码成功，临时路径：', tempFilePath);
+        this.setData({ worksQr: tempFilePath, isNewWorksQrSelected: true }, () => {
+          console.log('setData后 worksQr:', this.data.worksQr, 'isNewWorksQrSelected:', this.data.isNewWorksQrSelected);
+        });
+      }
+    });
+  },
+
+  // 保存图片到本地（通用）
+  saveImageToLocalPath(tempFilePath, prefix) {
     return new Promise((resolve, reject) => {
-      if (!this.data.isNewImageSelected) {
-        // 如果没有选择新图片，直接返回当前的avatarUrl
-        resolve(this.data.avatarUrl);
+      if (!tempFilePath || tempFilePath.startsWith('wxfile://')) {
+        // 已经是本地路径或为空，直接返回
+        resolve(tempFilePath);
         return;
       }
-
-      const tempFilePath = this.data.avatarUrl;
       // 生成文件名，使用时间戳确保唯一性
-      const fileName = `avatar_${Date.now()}.jpg`;
-      // 保存到本地用户文件夹中
-      wx.saveFile({
+      const fileName = `${prefix}_${Date.now()}.jpg`;
+      // 使用 wx.getFileSystemManager().saveFile 替代 wx.saveFile
+      const fs = wx.getFileSystemManager();
+      fs.saveFile({
         tempFilePath: tempFilePath,
         success: (res) => {
-          console.log('图片保存成功，永久路径：', res.savedFilePath);
+          console.log('保存图片到本地成功，路径：', res.savedFilePath);
           resolve(res.savedFilePath);
         },
         fail: (err) => {
-          console.error('保存图片失败：', err);
+          console.error('保存图片到本地失败：', err);
           reject(err);
         }
       });
@@ -370,12 +419,16 @@ Page({
     
     // 保留隐藏状态设置
     if (data.sectionHidden) filteredData.sectionHidden = data.sectionHidden;
+
+    // 新增：保留微信二维码和作品二维码路径
+    if (data.wechatQr) filteredData.wechatQr = data.wechatQr;
+    if (data.worksQr) filteredData.worksQr = data.worksQr;
     
     return filteredData;
   },
 
   // 修改更新全局数据的函数，注释掉联系方式相关部分
-  updateGlobalData(savedImagePath) {
+  updateGlobalData(savedImagePath, savedWechatQrPath, savedWorksQrPath) {
     return new Promise((resolve, reject) => {
       try {
         let userInfo = {
@@ -392,16 +445,16 @@ Page({
           about: this.data.about,
           avatarUrl: savedImagePath,
           customBlocks: this.data.customBlocks,
-          sectionHidden: this.data.sectionHidden
+          sectionHidden: this.data.sectionHidden,
+          wechatQr: savedWechatQrPath, // 新增
+          worksQr: savedWorksQrPath    // 新增
         };
-
+        console.log('updateGlobalData即将写入userInfo：', userInfo);
         // 过滤空字段
         userInfo = this.filterEmptyFields(userInfo);
-
         // 更新本地存储
         wx.setStorageSync('userInfo', userInfo);
         console.log('本地存储更新成功，新的用户信息：', userInfo);
-
         // 获取页面栈并更新首页数据
         const pages = getCurrentPages();
         const prevPage = pages[pages.length - 2];
@@ -409,71 +462,60 @@ Page({
           prevPage.setData({
             userInfo: userInfo
           }, () => {
-            console.log('首页数据更新成功');
+            console.log('首页数据更新成功', userInfo);
             resolve();
           });
         } else {
           resolve();
         }
       } catch (err) {
-        console.error('更新数据失败：', err);
+        console.error('updateGlobalData出错：', err);
         reject(err);
       }
     });
   },
 
   // 保存修改
-  saveChanges() {
-    // 添加轻微震动
-    wx.vibrateShort({
-      type: 'light'
-    });
-    
-    wx.showLoading({
-      title: '保存中...',
-      mask: true
-    });
-
-    // 1. 先保存图片到本地
-    this.saveImageToLocal()
-      .then(savedImagePath => {
-        console.log('开始更新全局数据，使用新的图片路径：', savedImagePath);
-        // 2. 更新全局数据和本地存储
-        return this.updateGlobalData(savedImagePath);
-      })
-      .then(() => {
-        // 3. 隐藏加载提示
-        wx.hideLoading();
-        // 4. 添加一个小延时再返回
-        setTimeout(() => {
-          wx.navigateBack({
-            delta: 1,
-            success: () => {
-              wx.showToast({
-                title: '保存成功',
-                icon: 'success',
-                duration: 1500
-              });
-            },
-            fail: (err) => {
-              console.error('返回失败：', err);
-              wx.showToast({
-                title: '操作完成',
-                icon: 'success',
-                duration: 1500
-              });
-            }
-          });
-        }, 100);
-      })
-      .catch(err => {
-        console.error('保存过程出错：', err);
-        wx.hideLoading();
-        wx.showToast({
-          title: '保存失败',
-          icon: 'error',
-          duration: 1500
+  async saveChanges() {
+    wx.vibrateShort({ type: 'light' });
+    wx.showLoading({ title: '保存中...', mask: true });
+    try {
+      // 1. 先保存头像到本地
+      let savedAvatarPath = this.data.avatarUrl;
+      if (this.data.isNewImageSelected) {
+        savedAvatarPath = await this.saveImageToLocalPath(this.data.avatarUrl, 'avatar');
+        console.log('保存头像到本地，路径：', savedAvatarPath);
+      }
+      // 2. 保存微信二维码到本地
+      let savedWechatQrPath = this.data.wechatQr;
+      if (this.data.isNewWechatQrSelected) {
+        savedWechatQrPath = await this.saveImageToLocalPath(this.data.wechatQr, 'wechatQr');
+        console.log('保存微信二维码到本地，路径：', savedWechatQrPath);
+      }
+      // 3. 保存个人作品二维码到本地
+      let savedWorksQrPath = this.data.worksQr;
+      if (this.data.isNewWorksQrSelected) {
+        savedWorksQrPath = await this.saveImageToLocalPath(this.data.worksQr, 'worksQr');
+        console.log('保存作品二维码到本地，路径：', savedWorksQrPath);
+      }
+      // 4. 更新全局数据和本地存储
+      await this.updateGlobalData(savedAvatarPath, savedWechatQrPath, savedWorksQrPath);
+      wx.hideLoading();
+      setTimeout(() => {
+        wx.navigateBack({
+          delta: 1,
+          success: () => {
+            wx.showToast({ title: '保存成功', icon: 'success', duration: 1500 });
+          },
+          fail: (err) => {
+            wx.showToast({ title: '操作完成', icon: 'success', duration: 1500 });
+          }
         });
-      });
-  }
+      }, 100);
+    } catch (err) {
+      wx.hideLoading();
+      wx.showToast({ title: '保存失败', icon: 'error', duration: 1500 });
+      console.error('保存修改出错：', err);
+    }
+  },
 }); 

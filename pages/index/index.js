@@ -10,7 +10,9 @@ Page({
       skills: ['吃', '睡', '玩'],
       hobbies: ['玩', '睡', '吃'],
       about: '这个人很懒，什么介绍也没留下。',
-      avatarUrl: '/images/avatar.png'
+      avatarUrl: '/images/avatar.png',
+      wechatQr: '', // 新增：微信二维码图片路径
+      worksQr: ''   // 新增：个人作品二维码图片路径
     },
     ctx: null,
     canvas: null,
@@ -20,21 +22,29 @@ Page({
   onLoad() {
     // 初始化时，如果本地存储没有数据，将默认数据保存到本地存储
     const storedUserInfo = wx.getStorageSync('userInfo');
+    console.log('index页面onLoad，获取到的本地userInfo：', storedUserInfo);
     if (!storedUserInfo) {
       wx.setStorageSync('userInfo', this.data.userInfo);
+      console.log('index页面onLoad，写入默认userInfo：', this.data.userInfo);
     }
     this.loadUserInfo();
   },
 
   onShow() {
+    console.log('index页面onShow');
     this.loadUserInfo();
   },
 
   loadUserInfo() {
     const storedUserInfo = wx.getStorageSync('userInfo');
+    console.log('index页面loadUserInfo，获取到的userInfo：', storedUserInfo);
     if (storedUserInfo) {
+      console.log('index页面loadUserInfo，wechatQr路径：', storedUserInfo.wechatQr);
       this.setData({
         userInfo: storedUserInfo
+      }, () => {
+        console.log('index页面setData后userInfo：', this.data.userInfo);
+        console.log('index页面setData后wechatQr路径：', this.data.userInfo.wechatQr);
       });
     }
   },
@@ -227,7 +237,35 @@ Page({
           ctx.beginPath();
           ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
           ctx.clip();
-          ctx.drawImage(img, centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+          // 【修改】实现 aspectFill 效果，裁剪图片并绘制到目标区域
+          const imgWidth = img.width;
+          const imgHeight = img.height;
+          const destSize = radius * 2; // 目标绘制区域尺寸 (正方形)
+
+          let sx, sy, sWidth, sHeight;
+
+          // 计算源矩形以实现 aspectFill
+          if (imgWidth / imgHeight > destSize / destSize) { // 图片宽高比 > 目标宽高比 (即图片比目标区域宽)
+            sHeight = imgHeight;
+            sWidth = imgHeight * (destSize / destSize); // sWidth = imgHeight * 1 = imgHeight
+            sx = (imgWidth - sWidth) / 2; // 水平居中裁剪
+            sy = 0;
+          } else { // 图片宽高比 <= 目标宽高比 (即图片比目标区域高或宽高比相同)
+            sWidth = imgWidth;
+            sHeight = imgWidth * (destSize / destSize); // sHeight = imgWidth * 1 = imgWidth
+            sx = 0;
+            sy = (imgHeight - sHeight) / 2; // 垂直居中裁剪
+          }
+
+          // 目标绘制区域
+          const dx = centerX - radius;
+          const dy = centerY - radius;
+          const dWidth = destSize;
+          const dHeight = destSize;
+
+          // 使用裁剪后的源矩形和目标矩形绘制图片
+          ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
           
           // 绘制头像边框
           ctx.strokeStyle = '#fff';
@@ -288,22 +326,22 @@ Page({
       } else {
         // 处理文本宽度限制
         const words = paragraph.split('');
-        let currentLine = '';
-        
-        for (let i = 0; i < words.length; i++) {
-          const testLine = currentLine + words[i];
-          const metrics = ctx.measureText(testLine);
-          
-          if (metrics.width > maxWidth && currentLine) {
-            lines.push(currentLine);
-            currentLine = words[i];
-          } else {
-            currentLine = testLine;
-          }
-        }
-        if (currentLine) {
-          lines.push(currentLine);
-        }
+    let currentLine = '';
+    
+    for (let i = 0; i < words.length; i++) {
+      const testLine = currentLine + words[i];
+      const metrics = ctx.measureText(testLine);
+      
+      if (metrics.width > maxWidth && currentLine) {
+        lines.push(currentLine);
+        currentLine = words[i];
+      } else {
+        currentLine = testLine;
+      }
+    }
+    if (currentLine) {
+      lines.push(currentLine);
+    }
       }
     });
     
@@ -328,7 +366,7 @@ Page({
     lines.forEach(line => {
       // 如果不是空行才绘制文本，空行只占位
       if (line !== '') {
-        ctx.fillText(line, textAreaStartX + textPadding, currentY);
+      ctx.fillText(line, textAreaStartX + textPadding, currentY);
       }
       currentY += lineHeight;
     });
@@ -421,6 +459,9 @@ Page({
       if (Array.isArray(info.customBlocks) && info.customBlocks.length > 0) {
         y = await this.drawCustomBlocks(y, textStartX, textAreaWidth, hiddenSections);
       }
+
+      // 新增：绘制二维码橱窗
+      y = await this.drawQrSection(y, textStartX, textAreaWidth, hiddenSections);
       
       return y;
     } catch (err) {
@@ -737,22 +778,22 @@ Page({
         } else {
           // 处理文本宽度限制
           const words = paragraph.split('');
-          let currentLine = '';
-          
-          for (let i = 0; i < words.length; i++) {
-            const testLine = currentLine + words[i];
-            const metrics = ctx.measureText(testLine);
-            
-            if (metrics.width > maxWidth && currentLine) {
-              lines.push(currentLine);
-              currentLine = words[i];
-            } else {
-              currentLine = testLine;
-            }
-          }
-          if (currentLine) {
-            lines.push(currentLine);
-          }
+      let currentLine = '';
+      
+      for (let i = 0; i < words.length; i++) {
+        const testLine = currentLine + words[i];
+        const metrics = ctx.measureText(testLine);
+        
+        if (metrics.width > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = words[i];
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) {
+        lines.push(currentLine);
+      }
         }
       });
       
@@ -777,7 +818,7 @@ Page({
       lines.forEach(line => {
         // 如果不是空行才绘制文本，空行只占位
         if (line !== '') {
-          ctx.fillText(line, textAreaStartX + textPadding, textY);
+        ctx.fillText(line, textAreaStartX + textPadding, textY);
         }
         textY += lineHeight;
       });
@@ -786,6 +827,189 @@ Page({
     }
     
     return currentY;
+  },
+
+  // 新增：绘制二维码橱窗部分
+  async drawQrSection(y, startX, areaWidth, hiddenSections) {
+    const ctx = this.ctx;
+    const info = this.data.userInfo;
+    let currentY = y;
+
+    // 检查整个二维码区块是否需要显示
+    const showWechatQr = !hiddenSections.wechatQr && info.wechatQr;
+    const showWorksQr = !hiddenSections.worksQr && info.worksQr;
+    
+    if (!showWechatQr && !showWorksQr) {
+      return y; // 如果两个都不显示，则跳过整个区块
+    }
+
+    // 绘制分割线
+    this.drawDivider(375, currentY + 40); // 添加分隔线
+    currentY += 100; // 留出分割线和标题空间，整体向下移动
+
+    // 绘制标题
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 32px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('联系我', 375, currentY);
+
+    currentY += 40; // 标题与二维码容器间距
+
+    const qrContainerY = currentY; // 记录二维码容器的起始Y坐标
+    const qrItemWidth = (areaWidth - 20) / 2; // 每个二维码项的宽度 (减去间距) - 这里 areaWidth 是 650，间距 20
+    const qrItemHeight = 200 + 18 + 28 + 5 + 24 + 20 * 2; // 图片高 + 图片底部间距 + 标签高 + 标签底部间距 + 描述高 + 上下padding (20*2)
+    const qrItemPadding = 20; // qr-item 的内边距
+    const qrImgSize = 160; // qr-img 的尺寸
+    const qrLabelHeight = 28; // qr-label 高度
+    const qrDescHeight = 24; // qr-desc 高度
+    const qrImgMarginBottom = 18;
+    const qrLabelMarginBottom = 5;
+    const qrItemSpacing = 20; // qr-item 之间的间距
+
+    let nextY = qrContainerY + qrItemHeight; // 假设的下一个板块起始Y坐标
+
+    // 判断是单个显示还是双个显示
+    const isSingleQr = (showWechatQr && !showWorksQr) || (!showWechatQr && showWorksQr);
+
+    // 绘制微信二维码项
+    if (showWechatQr) {
+      let itemX;
+      if (isSingleQr) {
+        // 单个显示时居中计算
+        itemX = 375 - qrItemWidth / 2; // 画布中心X - 单个二维码项宽度的一半
+      } else {
+        // 双个显示时靠左计算
+        itemX = 375 - areaWidth / 2; // 画布中心X - 二维码总区域宽度的一半
+      }
+
+      // 绘制背景和阴影
+      ctx.fillStyle = '#f8f9fa';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.05)';
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetY = 4;
+      this.drawRoundRectWithCompat(ctx, itemX, qrContainerY, qrItemWidth, qrItemHeight, 16);
+      ctx.shadowColor = 'transparent'; // 重置阴影
+
+      // 绘制图片占位背景和边框
+      const imgPlaceholderX = itemX + qrItemWidth/2 - qrImgSize/2;
+      const imgPlaceholderY = qrContainerY + qrItemPadding + 20;
+      ctx.fillStyle = '#fff';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+      ctx.shadowBlur = 20;
+      ctx.shadowOffsetY = 8;
+      this.drawRoundRectWithCompat(ctx, imgPlaceholderX, imgPlaceholderY, qrImgSize, qrImgSize, 16);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 8;
+      ctx.stroke();
+      ctx.shadowColor = 'transparent'; // 重置阴影
+
+      // 绘制图片
+      const img = this.canvas.createImage();
+      img.src = info.wechatQr;
+      await new Promise(resolve => {
+        img.onload = () => {
+          // 调整图片绘制位置和尺寸，使其在边框内部
+          ctx.drawImage(img, imgPlaceholderX + 4, imgPlaceholderY + 4, qrImgSize - 8, qrImgSize - 8);
+          resolve();
+        };
+        img.onerror = () => { // 加载失败时绘制占位符
+           const placeholderImg = this.canvas.createImage();
+           placeholderImg.src = '/images/qr-placeholder.png';
+           placeholderImg.onload = () => {
+             // 调整占位符绘制位置和尺寸，使其在边框内部
+             ctx.drawImage(placeholderImg, imgPlaceholderX + 4, imgPlaceholderY + 4, qrImgSize - 8, qrImgSize - 8);
+             resolve();
+           };
+           placeholderImg.onerror = () => resolve(); // 占位符也加载失败则直接resolve
+        };
+      });
+
+      // 绘制标签
+      ctx.fillStyle = '#2c3e50';
+      ctx.font = '600 28px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('微信', itemX + qrItemWidth/2, imgPlaceholderY + qrImgSize + qrImgMarginBottom + qrLabelHeight/2 + 10);
+
+      // 绘制描述
+      ctx.fillStyle = '#7f8c8d';
+      ctx.font = '24px sans-serif';
+      ctx.fillText('扫一扫添加好友', itemX + qrItemWidth/2, imgPlaceholderY + qrImgSize + qrImgMarginBottom + qrLabelHeight + qrLabelMarginBottom + qrDescHeight/2 + 10);
+    }
+
+    // 绘制个人作品二维码项
+    if (showWorksQr) {
+      let itemX;
+      if (isSingleQr) {
+        // 单个显示时居中计算
+        itemX = 375 - qrItemWidth / 2; // 画布中心X - 单个二维码项宽度的一半
+      } else {
+        // 双个显示时靠右计算
+        itemX = 375 - areaWidth / 2 + qrItemWidth + qrItemSpacing; // 画布中心X - 二维码总区域宽度的一半 + 一个二维码项宽度 + 间距
+      }
+
+      // 【修改】调用新的绘制单个二维码项函数
+      await this.drawSingleQrItem(ctx, info, itemX, qrContainerY, qrItemWidth, qrItemHeight, qrItemPadding, qrImgSize, qrImgMarginBottom, qrLabelHeight, qrLabelMarginBottom, qrDescHeight, info.worksQr, '其他账号', '查看更多');
+    }
+
+    // 返回下一个板块的Y坐标
+    return nextY + 60; // 增加底部间距
+  },
+
+  // 新增：绘制单个二维码项的函数 (封装复用逻辑)
+  async drawSingleQrItem(ctx, info, itemX, qrContainerY, qrItemWidth, qrItemHeight, qrItemPadding, qrImgSize, qrImgMarginBottom, qrLabelHeight, qrLabelMarginBottom, qrDescHeight, qrPath, qrLabelText, qrDescText) {
+
+     // 绘制背景和阴影
+     ctx.fillStyle = '#f8f9fa';
+     ctx.shadowColor = 'rgba(0, 0, 0, 0.05)';
+     ctx.shadowBlur = 8;
+     ctx.shadowOffsetY = 4;
+     this.drawRoundRectWithCompat(ctx, itemX, qrContainerY, qrItemWidth, qrItemHeight, 16);
+     ctx.shadowColor = 'transparent'; // 重置阴影
+
+     // 绘制图片占位背景和边框
+      const imgPlaceholderX = itemX + qrItemWidth/2 - qrImgSize/2;
+      const imgPlaceholderY = qrContainerY + qrItemPadding + 20;
+      ctx.fillStyle = '#fff';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+      ctx.shadowBlur = 20;
+      ctx.shadowOffsetY = 8;
+      this.drawRoundRectWithCompat(ctx, imgPlaceholderX, imgPlaceholderY, qrImgSize, qrImgSize, 16);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 8; // 边框变大
+      ctx.stroke();
+      ctx.shadowColor = 'transparent'; // 重置阴影
+
+     // 绘制图片
+     const img = this.canvas.createImage();
+     img.src = qrPath;
+     await new Promise(resolve => {
+       img.onload = () => {
+         // 调整图片绘制位置和尺寸，使其在边框内部
+         ctx.drawImage(img, imgPlaceholderX + 4, imgPlaceholderY + 4, qrImgSize - 8, qrImgSize - 8);
+         resolve();
+       };
+        img.onerror = () => { // 加载失败时绘制占位符
+          const placeholderImg = this.canvas.createImage();
+          placeholderImg.src = '/images/qr-placeholder.png';
+          placeholderImg.onload = () => {
+            // 调整占位符绘制位置和尺寸，使其在边框内部
+            ctx.drawImage(placeholderImg, imgPlaceholderX + 4, imgPlaceholderY + 4, qrImgSize - 8, qrImgSize - 8);
+            resolve();
+          };
+          placeholderImg.onerror = () => resolve(); // 占位符也加载失败则直接resolve
+       };
+     });
+
+     // 绘制标签
+     ctx.fillStyle = '#2c3e50';
+     ctx.font = '600 28px sans-serif';
+     ctx.textAlign = 'center';
+     ctx.fillText(qrLabelText, itemX + qrItemWidth/2, imgPlaceholderY + qrImgSize + qrImgMarginBottom + qrLabelHeight/2 + 10); // 这里的偏移已经包含在 imgPlaceholderY 的调整中
+
+     // 绘制描述
+     ctx.fillStyle = '#7f8c8d';
+     ctx.font = '24px sans-serif';
+     ctx.fillText(qrDescText, itemX + qrItemWidth/2, imgPlaceholderY + qrImgSize + qrImgMarginBottom + qrLabelHeight + qrLabelMarginBottom + qrDescHeight/2 + 10); // 这里的偏移已经包含在 imgPlaceholderY 的调整中
   },
 
   // 修改生成图片方法，计算并传递正确的高度

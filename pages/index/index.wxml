@@ -76,6 +76,27 @@
         </block>
       </block>
 
+      <!-- 联系我二维码橱窗 -->
+      <view class="qr-section" wx:if="{{!userInfo.sectionHidden || (!userInfo.sectionHidden.wechatQr || !userInfo.sectionHidden.worksQr)}}">
+        <view class="section-title">联系我</view>
+        <view class="qr-container">
+          <view class="qr-item" wx:if="{{!userInfo.sectionHidden || !userInfo.sectionHidden.wechatQr}}">
+            <view class="qr-placeholder">
+              <image class="qr-img" src="{{userInfo.wechatQr || '/images/qr-placeholder.png'}}" mode="aspectFit"></image>
+            </view>
+            <view class="qr-label">微信</view>
+            <view class="qr-desc">扫一扫添加好友</view>
+          </view>
+          <view class="qr-item" wx:if="{{!userInfo.sectionHidden || !userInfo.sectionHidden.worksQr}}">
+            <view class="qr-placeholder">
+              <image class="qr-img" src="{{userInfo.worksQr || '/images/qr-placeholder.png'}}" mode="aspectFit"></image>
+            </view>
+            <view class="qr-label">其他账号</view>
+            <view class="qr-desc">查看更多</view>
+          </view>
+        </view>
+      </view>
+
     </view>
   </view>
 </scroll-view>

@@ -336,3 +336,101 @@ page {
   background: transparent;
   box-shadow: none;
 }
+
+.qr-section {
+  margin-top: 40rpx;
+  padding-top: 40rpx;
+  border-top: 2rpx solid #ecf0f1;
+}
+
+.qr-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 20rpx;
+}
+
+/* 新增：当只有一个二维码项时，使其父容器居中 */
+.qr-container .qr-item:only-child {
+  margin: 0 auto; /* 水平居中 */
+}
+
+.qr-item {
+  flex: 1;
+  background: #f8f9fa;
+  border-radius: 16rpx;
+  padding: 20rpx; /* 调整 padding */
+  box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* margin: 0 8rpx; */ /* 移除 margin */
+  max-width: 320rpx; /* 限制单个二维码项的最大宽度 */
+}
+
+.qr-item:not(:last-child) {
+  margin-right: 20rpx; /* 保持二维码之间的间距 */
+}
+
+/* 移除 qr-placeholder 样式 */
+/*
+.qr-placeholder {
+  width: 160rpx;
+  height: 160rpx;
+  background: #fff;
+  border: 2rpx dashed #bdc3c7;
+  border-radius: 12rpx;
+  margin-bottom: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid blue; 
+}
+*/
+
+.qr-img {
+  width: 160rpx; /* 调整边长 */
+  height: 160rpx; /* 调整边长 */
+  opacity: 1; /* 恢复不透明度 */
+  border-radius: 16rpx; /* 带圆角 */
+  border: 6rpx solid #fff; /* 添加白色边框 */
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.15); /* 添加阴影 */
+  margin-bottom: 18rpx; /* 添加底部间距 */
+  background: #fff; /* 添加白色背景 */
+  /* 移除调试样式 */
+  /* border: 1px solid red; */ 
+  /* background: #f0f0f0; */
+}
+
+.qr-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 5rpx;
+}
+
+.qr-desc {
+  font-size: 24rpx;
+  color: #7f8c8d;
+  line-height: 1.4;
+}
+
+/*
+@media screen and (max-width: 480px) {
+  .qr-container {
+    flex-direction: column;
+    gap: 15rpx;
+  }
+  .qr-item {
+    padding: 15rpx 0;
+  }
+  .qr-placeholder {
+    width: 120rpx;
+    height: 120rpx;
+  }
+  .qr-img {
+    width: 80rpx;
+    height: 80rpx;
+  }
+}
+*/
