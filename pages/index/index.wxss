@@ -5,6 +5,7 @@ page {
   flex-direction: column;
   background: #f5f7fa;
   font-family: system-ui, -apple-system;
+  --section-spacing: 40rpx; /* 添加板块间距变量 */
 }
 
 .scrollarea {
@@ -156,7 +157,7 @@ page {
 }
 
 .skills-section {
-  margin-top: 20rpx;
+  margin-top: var(--section-spacing);
 }
 
 .skills {
@@ -192,7 +193,7 @@ page {
 }
 
 .about-section {
-  margin-top: 20rpx;
+  margin-top: var(--section-spacing);
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -210,12 +211,12 @@ page {
 
 /* 为文字块添加样式 */
 .text-block {
-  margin-top: 30rpx; /* 顶部间距 */
+  margin-top: var(--section-spacing);
 }
 
 /* 自定义块样式 */
 .custom-block-section {
-  margin-top: 40rpx; /* 增加自定义块间的间距 */
+  margin-top: var(--section-spacing);
   display: flex;
   flex-direction: column;
 }
@@ -240,7 +241,7 @@ page {
 }
 
 .hobbies-section {
-  margin-top: 20rpx;
+  margin-top: var(--section-spacing);
 }
 
 .hobbies {
@@ -338,9 +339,7 @@ page {
 }
 
 .qr-section {
-  margin-top: 40rpx;
-  padding-top: 40rpx;
-  border-top: 2rpx solid #ecf0f1;
+  margin-top: var(--section-spacing);
 }
 
 .qr-container {
@@ -359,12 +358,11 @@ page {
   flex: 1;
   background: #f8f9fa;
   border-radius: 16rpx;
-  padding: 20rpx; /* 调整 padding */
+  padding: 40rpx 20rpx 20rpx; /* 增加顶部内边距 */
   box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* margin: 0 8rpx; */ /* 移除 margin */
   max-width: 320rpx; /* 限制单个二维码项的最大宽度 */
 }
 
@@ -395,21 +393,14 @@ page {
   border-radius: 16rpx; /* 带圆角 */
   border: 6rpx solid #fff; /* 添加白色边框 */
   box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.15); /* 添加阴影 */
-  margin-bottom: 18rpx; /* 添加底部间距 */
+  margin-bottom: 24rpx; /* 修改底部间距为一行文字的高度 */
   background: #fff; /* 添加白色背景 */
   /* 移除调试样式 */
   /* border: 1px solid red; */ 
   /* background: #f0f0f0; */
 }
 
-.qr-label {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 5rpx;
-}
-
-.qr-desc {
+.qr-text {
   font-size: 24rpx;
   color: #7f8c8d;
   line-height: 1.4;

@@ -2,12 +2,6 @@ Page({
   data: {
     name: '',
     title: '',
-    // 注释掉联系方式相关数据
-    /*
-    phone: '',
-    email: '',
-    address: '',
-    */
     skills: [],
     hobbies: [],
     newSkill: '',
@@ -41,10 +35,10 @@ Page({
     const blockPadding = 50 // 每个块额外需要的padding调整值
     const qrBlockHeight = 420 // 每个二维码块的高度（含间距）
     const qrBlockCount = 2 // 二维码块数量
-
+    
     const totalHeight = baseHeight + (this.data.customBlocks.length * customBlockHeight) + (qrBlockCount * qrBlockHeight)
     const totalPadding = basePadding + (this.data.customBlocks.length * blockPadding) + (qrBlockCount * 120) // padding适当小于内容高度
-
+    
     return {
       containerHeight: `calc(100vh + ${totalHeight}rpx)`,
       scrollAreaPadding: `${totalPadding}rpx`
@@ -118,27 +112,6 @@ Page({
       title: e.detail.value
     });
   },
-
-  // 注释掉联系方式相关的输入处理函数
-  /*
-  onPhoneInput(e) {
-    this.setData({
-      phone: e.detail.value
-    });
-  },
-
-  onEmailInput(e) {
-    this.setData({
-      email: e.detail.value
-    });
-  },
-
-  onAddressInput(e) {
-    this.setData({
-      address: e.detail.value
-    });
-  },
-  */
 
   onNewSkillInput(e) {
     this.setData({
@@ -500,22 +473,22 @@ Page({
       }
       // 4. 更新全局数据和本地存储
       await this.updateGlobalData(savedAvatarPath, savedWechatQrPath, savedWorksQrPath);
-      wx.hideLoading();
-      setTimeout(() => {
-        wx.navigateBack({
-          delta: 1,
-          success: () => {
+        wx.hideLoading();
+        setTimeout(() => {
+          wx.navigateBack({
+            delta: 1,
+            success: () => {
             wx.showToast({ title: '保存成功', icon: 'success', duration: 1500 });
-          },
-          fail: (err) => {
+            },
+            fail: (err) => {
             wx.showToast({ title: '操作完成', icon: 'success', duration: 1500 });
-          }
-        });
-      }, 100);
+            }
+          });
+        }, 100);
     } catch (err) {
-      wx.hideLoading();
+        wx.hideLoading();
       wx.showToast({ title: '保存失败', icon: 'error', duration: 1500 });
       console.error('保存修改出错：', err);
-    }
+  }
   },
 }); 

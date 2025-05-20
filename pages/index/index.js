@@ -1,12 +1,11 @@
 // index.js
+const { drawRoundRectWithCompat, drawDivider, drawMultilineText, drawImageWithPlaceholder } = require('../../utils/canvasHelper.js');
+
 Page({
   data: {
     userInfo: {
       name: '名片君',
       title: '前端理发师',
-      phone: '',
-      email: '',
-      address: '',
       skills: ['吃', '睡', '玩'],
       hobbies: ['玩', '睡', '吃'],
       about: '这个人很懒，什么介绍也没留下。',
@@ -16,7 +15,8 @@ Page({
     },
     ctx: null,
     canvas: null,
-    isGenerating: false  // 添加状态标记，防止重复生成
+    isGenerating: false,  // 添加状态标记，防止重复生成
+    SECTION_SPACING: 40   // 添加板块间距常量
   },
 
   onLoad() {
@@ -77,49 +77,6 @@ Page({
     wx.navigateTo({
       url: '/pages/edit/edit'
     });
-  },
-
-  // 通用方法：带兼容性检查的圆角矩形绘制
-  // 参数说明：
-  // ctx: canvas上下文
-  // x: 矩形左上角x坐标
-  // y: 矩形左上角y坐标
-  // width: 矩形宽度
-  // height: 矩形高度
-  // radius: 圆角半径
-  // fill: 是否填充（可选，默认true）
-  // stroke: 是否描边（可选，默认false）
-  drawRoundRectWithCompat(ctx, x, y, width, height, radius, fill = true, stroke = false) {
-    // 1. 检查是否支持原生 roundRect
-    const supportsRoundRect = typeof ctx.roundRect === 'function';
-    
-    if (supportsRoundRect) {
-      // 2. 支持原生方法时直接使用
-      ctx.beginPath();
-      ctx.roundRect(x, y, width, height, radius);
-    } else {
-      // 3. 不支持时使用基础方法绘制
-      ctx.beginPath();
-      // 从左上角开始，顺时针绘制
-      ctx.moveTo(x + radius, y);
-      ctx.lineTo(x + width - radius, y);
-      ctx.arcTo(x + width, y, x + width, y + radius, radius);
-      ctx.lineTo(x + width, y + height - radius);
-      ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius);
-      ctx.lineTo(x + radius, y + height);
-      ctx.arcTo(x, y + height, x, y + height - radius, radius);
-      ctx.lineTo(x, y + radius);
-      ctx.arcTo(x, y, x + radius, y, radius);
-      ctx.closePath();
-    }
-    
-    // 4. 根据参数决定是填充还是描边
-    if (fill) {
-      ctx.fill();
-    }
-    if (stroke) {
-      ctx.stroke();
-    }
   },
 
   // 改进初始化canvas方法，支持动态高度
@@ -195,7 +152,7 @@ Page({
     ctx.shadowOffsetY = 8;
 
     // 3. 绘制名片主体（全画布宽高，圆角36px）
-    this.drawRoundRectWithCompat(ctx, 0, 0, canvasWidth, contentHeight, 36);
+    drawRoundRectWithCompat(ctx, 0, 0, canvasWidth, contentHeight, 36);
 
     // 4. 重置阴影
     ctx.shadowColor = 'transparent';
@@ -291,8 +248,6 @@ Page({
     
     if (!about) return y;
     
-    y += 20;
-    
     // 绘制标题，增大字体
     ctx.fillStyle = '#333333';
     ctx.font = 'bold 32px sans-serif';  // 改为32px
@@ -350,7 +305,7 @@ Page({
     
     // 绘制背景
     ctx.fillStyle = '#f9f9f9';
-    this.drawRoundRectWithCompat(
+    drawRoundRectWithCompat(
       ctx,
       textAreaStartX,
       textStartY - textPadding,
@@ -371,10 +326,10 @@ Page({
       currentY += lineHeight;
     });
     
-    return currentY + textPadding + 50;  // 增加底部间距
+    return currentY + textPadding + this.data.SECTION_SPACING;  // 使用统一的板块间距
   },
 
-  // 修改 drawInfo 方法，调整文本区域宽度和字体大小
+  // 修改 drawInfo 方法，注释掉联系方式相关部分
   async drawInfo() {
     try {
       const ctx = this.ctx;
@@ -402,29 +357,10 @@ Page({
       
       let y = 430;  // 跟随整体下移
       
-      // 绘制联系方式，仅当联系方式区域未隐藏时
-      if (!hiddenSections.contact && (info.phone || info.email || info.address)) {
-        this.drawDivider(centerX, y);
-        y += 40;
-        
-        if (info.phone) {
-          await this.drawContactItem('/images/phone.png', info.phone, y, textStartX);
-          y += 60;
-        }
-        if (info.email) {
-          await this.drawContactItem('/images/e-mail.png', info.email, y, textStartX);
-          y += 60;
-        }
-        if (info.address) {
-          await this.drawContactItem('/images/address.png', info.address, y, textStartX);
-          y += 60;
-        }
-      }
-      
       // 绘制技能部分，仅当技能区域未隐藏时
       if (!hiddenSections.skills && Array.isArray(info.skills) && info.skills.length > 0) {
-        this.drawDivider(centerX, y);
-        y += 40;
+        drawDivider(ctx, centerX, y);
+        y += this.data.SECTION_SPACING * 2; // 增加与分割线的间距
         // 【修改】先清除这块区域，确保不受前面内容影响
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, y, 750, 300);
@@ -433,8 +369,7 @@ Page({
       
       // 绘制爱好部分，仅当爱好区域未隐藏时
       if (!hiddenSections.hobbies && Array.isArray(info.hobbies) && info.hobbies.length > 0) {
-        // 【修改】减小额外间距
-        y += 20; // 【修改】减小额外间距，从50改为20
+        y += this.data.SECTION_SPACING;
         
         // 【修改】先清除这块区域，确保不受前面内容影响
         ctx.fillStyle = '#ffffff';
@@ -445,8 +380,7 @@ Page({
       
       // 绘制自我介绍，仅当自我介绍区域未隐藏时
       if (!hiddenSections.about && info.about) {
-        // 【修改】减小额外间距
-        y += 20; // 【修改】减小额外间距，从50改为20
+        y += this.data.SECTION_SPACING;
         
         // 【修改】先清除这块区域，确保不受前面内容影响
         ctx.fillStyle = '#ffffff';
@@ -498,19 +432,7 @@ Page({
       ctx.fill();
       
       // 绘制图标
-      await new Promise((resolve, reject) => {
-        const img = this.canvas.createImage();
-        img.onload = () => {
-          try {
-            ctx.drawImage(img, startX + 9, y - 16, 32, 32);
-            resolve();
-          } catch (err) {
-            reject(err);
-          }
-        };
-        img.onerror = () => reject(new Error(`加载图标失败: ${iconPath}`));
-        img.src = iconPath;
-      });
+      await drawImageWithPlaceholder(ctx, this.canvas, iconPath, startX + 9, y - 16, 32, 32, '/images/avatar.png');
       
       // 绘制文字
       ctx.fillStyle = '#333333';
@@ -522,13 +444,10 @@ Page({
     }
   },
 
-  // 修改 drawSkillsSection 方法，添加灰色背景框
+  // 修改 drawSkillsSection 方法
   drawSkillsSection(y, startX, areaWidth) {
     const ctx = this.ctx;
     const skills = this.data.userInfo.skills;
-    
-    // 增加初始间距
-    y += 50;
     
     // 绘制标题（居中），增大字体
     ctx.fillStyle = '#333333';
@@ -543,7 +462,7 @@ Page({
     }));
     
     // 修改这里，让标题与内容的间距与"关于我"保持一致
-    let currentY = y + 80;  // 【修改】增加更多间距，从60改为80
+    let currentY = y + 80;  // 保持与标题的固定间距，确保不会被遮挡
     const spacing = 30;  // 增加标签间距
     const maxLineWidth = 650;  // 增加最大行宽
     let currentLine = [];
@@ -576,7 +495,7 @@ Page({
     ctx.fillStyle = '#fcfcfc';
     // 修改背景框宽度，使之与其他板块一致
     const bgWidth = 650; // 【修改】统一背景框宽度为650px，与其他板块保持一致
-    this.drawRoundRectWithCompat(
+    drawRoundRectWithCompat(
       ctx,
       375 - bgWidth/2,  // 【修改】使用固定宽度，保证所有板块宽度一致
       currentY - 15 - padding,  // 【修改】将背景框的起始Y坐标下移，从-25改为-15
@@ -595,7 +514,7 @@ Page({
       line.forEach((tag, index) => {
         // 使用通用方法绘制标签背景，增加高度
         ctx.fillStyle = '#f0f4ff';
-        this.drawRoundRectWithCompat(ctx, currentX, currentY - 15, tag.width, 50, 25);  // 【修改】标签背景也下移，从-25改为-15
+        drawRoundRectWithCompat(ctx, currentX, currentY - 15, tag.width, 50, 25);  // 【修改】标签背景也下移，从-25改为-15
         
         // 绘制标签文字，增大字体
         ctx.fillStyle = '#333333';
@@ -612,7 +531,7 @@ Page({
     });
 
     // 返回下一个板块应该开始的Y坐标
-    return currentY + 40;  // 【修改】减小底部间距，从60改为40，让"我擅长"和"我喜欢"间隔更接近
+    return currentY + this.data.SECTION_SPACING;  // 使用统一的板块间距
   },
 
   // 绘制图标的通用方法
@@ -627,13 +546,10 @@ Page({
     });
   },
 
-  // 修改 drawHobbiesSection 方法，添加灰色背景框
+  // 修改 drawHobbiesSection 方法
   drawHobbiesSection(y, startX, areaWidth) {
     const ctx = this.ctx;
     const hobbies = this.data.userInfo.hobbies;
-    
-    // 【修改】减小与前一个板块的间距
-    y += 40;  // 【修改】从60改为40，减小与前一个板块的间距
     
     // 绘制标题（居中），增大字体
     ctx.fillStyle = '#333333';
@@ -681,7 +597,7 @@ Page({
     ctx.fillStyle = '#fcfcfc';
     // 修改背景框宽度，使之与其他板块一致
     const bgWidth = 650; // 【修改】统一背景框宽度为650px，与其他板块保持一致
-    this.drawRoundRectWithCompat(
+    drawRoundRectWithCompat(
       ctx,
       375 - bgWidth/2,  // 【修改】使用固定宽度，保证所有板块宽度一致
       currentY - 15 - padding,  // 【修改】将背景框的起始Y坐标下移，从-25改为-15
@@ -700,7 +616,7 @@ Page({
       line.forEach((tag, index) => {
         // 使用通用方法绘制标签背景，增加高度
         ctx.fillStyle = '#f0f4ff';
-        this.drawRoundRectWithCompat(ctx, currentX, currentY - 15, tag.width, 50, 25);  // 【修改】标签背景也下移，从-25改为-15
+        drawRoundRectWithCompat(ctx, currentX, currentY - 15, tag.width, 50, 25);  // 【修改】标签背景也下移，从-25改为-15
         
         // 绘制标签文字，增大字体
         ctx.fillStyle = '#333333';
@@ -717,10 +633,10 @@ Page({
     });
 
     // 返回下一个板块应该开始的Y坐标
-    return currentY + 60;  // 【修改】减小底部间距，从100改为60，与正常板块间距保持一致
+    return currentY + this.data.SECTION_SPACING;  // 使用统一的板块间距
   },
 
-  // 修改自定义块方法，添加对换行符的支持
+  // 修改 drawCustomBlocks 方法
   async drawCustomBlocks(y, startX, areaWidth, hiddenSections) {
     const ctx = this.ctx;
     const customBlocks = this.data.userInfo.customBlocks;
@@ -743,7 +659,7 @@ Page({
         isFirstVisible = false; // 设置为false，后续块不再添加分隔线
       } else {
         // 不绘制分隔线，但添加一些空间
-        currentY += 30;
+        currentY += this.data.SECTION_SPACING;
       }
       
       // 绘制标题
@@ -802,7 +718,7 @@ Page({
       
       // 绘制背景
       ctx.fillStyle = '#f9f9f9';
-      this.drawRoundRectWithCompat(
+      drawRoundRectWithCompat(
         ctx,
         textAreaStartX,
         textStartY - textPadding,
@@ -823,10 +739,12 @@ Page({
         textY += lineHeight;
       });
       
-      currentY = textY + textPadding + 50;  // 增加底部间距
+      // 【修改】移除重复的间距添加，只保留文本区域的内边距
+      currentY = textY + textPadding;
     }
     
-    return currentY;
+    // 【修改】在返回时添加一个统一的板块间距
+    return currentY + this.data.SECTION_SPACING;
   },
 
   // 新增：绘制二维码橱窗部分
@@ -843,27 +761,21 @@ Page({
       return y; // 如果两个都不显示，则跳过整个区块
     }
 
-    // 绘制分割线
-    this.drawDivider(375, currentY + 40); // 添加分隔线
-    currentY += 100; // 留出分割线和标题空间，整体向下移动
-
     // 绘制标题
     ctx.fillStyle = '#333';
     ctx.font = 'bold 32px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('联系我', 375, currentY);
+    ctx.fillText('联系我', 375, currentY + this.data.SECTION_SPACING);
 
-    currentY += 40; // 标题与二维码容器间距
+    // 标题与二维码容器的间距
+    currentY += this.data.SECTION_SPACING + 30;
 
     const qrContainerY = currentY; // 记录二维码容器的起始Y坐标
     const qrItemWidth = (areaWidth - 20) / 2; // 每个二维码项的宽度 (减去间距) - 这里 areaWidth 是 650，间距 20
-    const qrItemHeight = 200 + 18 + 28 + 5 + 24 + 20 * 2; // 图片高 + 图片底部间距 + 标签高 + 标签底部间距 + 描述高 + 上下padding (20*2)
+    const qrItemHeight = 264; // 保持正方形
     const qrItemPadding = 20; // qr-item 的内边距
     const qrImgSize = 160; // qr-img 的尺寸
-    const qrLabelHeight = 28; // qr-label 高度
-    const qrDescHeight = 24; // qr-desc 高度
-    const qrImgMarginBottom = 18;
-    const qrLabelMarginBottom = 5;
+    const fontSize = 24; // 文字字号
     const qrItemSpacing = 20; // qr-item 之间的间距
 
     let nextY = qrContainerY + qrItemHeight; // 假设的下一个板块起始Y坐标
@@ -875,11 +787,9 @@ Page({
     if (showWechatQr) {
       let itemX;
       if (isSingleQr) {
-        // 单个显示时居中计算
-        itemX = 375 - qrItemWidth / 2; // 画布中心X - 单个二维码项宽度的一半
+        itemX = 375 - qrItemWidth / 2;
       } else {
-        // 双个显示时靠左计算
-        itemX = 375 - areaWidth / 2; // 画布中心X - 二维码总区域宽度的一半
+        itemX = 375 - areaWidth / 2;
       }
 
       // 绘制背景和阴影
@@ -887,132 +797,85 @@ Page({
       ctx.shadowColor = 'rgba(0, 0, 0, 0.05)';
       ctx.shadowBlur = 8;
       ctx.shadowOffsetY = 4;
-      this.drawRoundRectWithCompat(ctx, itemX, qrContainerY, qrItemWidth, qrItemHeight, 16);
+      drawRoundRectWithCompat(ctx, itemX, qrContainerY, qrItemWidth, qrItemHeight, 16);
       ctx.shadowColor = 'transparent'; // 重置阴影
 
       // 绘制图片占位背景和边框
       const imgPlaceholderX = itemX + qrItemWidth/2 - qrImgSize/2;
-      const imgPlaceholderY = qrContainerY + qrItemPadding + 20;
+      // 让二维码图片整体垂直居中于灰色块上半部分
+      const imgPlaceholderY = qrContainerY + qrItemPadding + 10; // 适当调整
       ctx.fillStyle = '#fff';
       ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
       ctx.shadowBlur = 20;
       ctx.shadowOffsetY = 8;
-      this.drawRoundRectWithCompat(ctx, imgPlaceholderX, imgPlaceholderY, qrImgSize, qrImgSize, 16);
+      drawRoundRectWithCompat(ctx, imgPlaceholderX, imgPlaceholderY, qrImgSize, qrImgSize, 16);
       ctx.strokeStyle = '#fff';
       ctx.lineWidth = 8;
       ctx.stroke();
       ctx.shadowColor = 'transparent'; // 重置阴影
 
       // 绘制图片
-      const img = this.canvas.createImage();
-      img.src = info.wechatQr;
-      await new Promise(resolve => {
-        img.onload = () => {
-          // 调整图片绘制位置和尺寸，使其在边框内部
-          ctx.drawImage(img, imgPlaceholderX + 4, imgPlaceholderY + 4, qrImgSize - 8, qrImgSize - 8);
-          resolve();
-        };
-        img.onerror = () => { // 加载失败时绘制占位符
-           const placeholderImg = this.canvas.createImage();
-           placeholderImg.src = '/images/qr-placeholder.png';
-           placeholderImg.onload = () => {
-             // 调整占位符绘制位置和尺寸，使其在边框内部
-             ctx.drawImage(placeholderImg, imgPlaceholderX + 4, imgPlaceholderY + 4, qrImgSize - 8, qrImgSize - 8);
-             resolve();
-           };
-           placeholderImg.onerror = () => resolve(); // 占位符也加载失败则直接resolve
-        };
-      });
+      await drawImageWithPlaceholder(ctx, this.canvas, info.wechatQr, imgPlaceholderX + 4, imgPlaceholderY + 4, qrImgSize - 8, qrImgSize - 8, '/images/avatar.png');
 
-      // 绘制标签
-      ctx.fillStyle = '#2c3e50';
-      ctx.font = '600 28px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('微信', itemX + qrItemWidth/2, imgPlaceholderY + qrImgSize + qrImgMarginBottom + qrLabelHeight/2 + 10);
-
-      // 绘制描述
+      // 绘制文字，Y坐标为灰色块底部减去一行字高
       ctx.fillStyle = '#7f8c8d';
-      ctx.font = '24px sans-serif';
-      ctx.fillText('扫一扫添加好友', itemX + qrItemWidth/2, imgPlaceholderY + qrImgSize + qrImgMarginBottom + qrLabelHeight + qrLabelMarginBottom + qrDescHeight/2 + 10);
+      ctx.font = `${fontSize}px sans-serif`;
+      ctx.textAlign = 'center';
+      const textY = qrContainerY + qrItemHeight - fontSize;
+      ctx.fillText('微信', itemX + qrItemWidth/2, textY);
     }
 
     // 绘制个人作品二维码项
     if (showWorksQr) {
       let itemX;
       if (isSingleQr) {
-        // 单个显示时居中计算
-        itemX = 375 - qrItemWidth / 2; // 画布中心X - 单个二维码项宽度的一半
+        itemX = 375 - qrItemWidth / 2;
       } else {
-        // 双个显示时靠右计算
-        itemX = 375 - areaWidth / 2 + qrItemWidth + qrItemSpacing; // 画布中心X - 二维码总区域宽度的一半 + 一个二维码项宽度 + 间距
+        itemX = 375 - areaWidth / 2 + qrItemWidth + qrItemSpacing;
       }
-
-      // 【修改】调用新的绘制单个二维码项函数
-      await this.drawSingleQrItem(ctx, info, itemX, qrContainerY, qrItemWidth, qrItemHeight, qrItemPadding, qrImgSize, qrImgMarginBottom, qrLabelHeight, qrLabelMarginBottom, qrDescHeight, info.worksQr, '其他账号', '查看更多');
+      await this.drawSingleQrItem(ctx, info, itemX, qrContainerY, qrItemWidth, qrItemHeight, qrItemPadding, qrImgSize, fontSize, qrItemSpacing, info.worksQr, '小红书账号', '查看更多');
     }
 
     // 返回下一个板块的Y坐标
-    return nextY + 60; // 增加底部间距
+    return nextY + this.data.SECTION_SPACING; // 使用统一的板块间距
   },
 
   // 新增：绘制单个二维码项的函数 (封装复用逻辑)
-  async drawSingleQrItem(ctx, info, itemX, qrContainerY, qrItemWidth, qrItemHeight, qrItemPadding, qrImgSize, qrImgMarginBottom, qrLabelHeight, qrLabelMarginBottom, qrDescHeight, qrPath, qrLabelText, qrDescText) {
+  async drawSingleQrItem(ctx, info, itemX, qrContainerY, qrItemWidth, qrItemHeight, qrItemPadding, qrImgSize, fontSize, qrItemSpacing, qrPath, qrLabelText, qrDescText) {
 
      // 绘制背景和阴影
      ctx.fillStyle = '#f8f9fa';
      ctx.shadowColor = 'rgba(0, 0, 0, 0.05)';
      ctx.shadowBlur = 8;
      ctx.shadowOffsetY = 4;
-     this.drawRoundRectWithCompat(ctx, itemX, qrContainerY, qrItemWidth, qrItemHeight, 16);
+     drawRoundRectWithCompat(ctx, itemX, qrContainerY, qrItemWidth, qrItemHeight, 16);
      ctx.shadowColor = 'transparent'; // 重置阴影
 
      // 绘制图片占位背景和边框
-      const imgPlaceholderX = itemX + qrItemWidth/2 - qrImgSize/2;
-      const imgPlaceholderY = qrContainerY + qrItemPadding + 20;
-      ctx.fillStyle = '#fff';
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
-      ctx.shadowBlur = 20;
-      ctx.shadowOffsetY = 8;
-      this.drawRoundRectWithCompat(ctx, imgPlaceholderX, imgPlaceholderY, qrImgSize, qrImgSize, 16);
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 8; // 边框变大
-      ctx.stroke();
-      ctx.shadowColor = 'transparent'; // 重置阴影
+     const imgPlaceholderX = itemX + qrItemWidth/2 - qrImgSize/2;
+     const imgPlaceholderY = qrContainerY + qrItemPadding + 10;
+     ctx.fillStyle = '#fff';
+     ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+     ctx.shadowBlur = 20;
+     ctx.shadowOffsetY = 8;
+     drawRoundRectWithCompat(ctx, imgPlaceholderX, imgPlaceholderY, qrImgSize, qrImgSize, 16);
+     ctx.strokeStyle = '#fff';
+     ctx.lineWidth = 8;
+     ctx.stroke();
+     ctx.shadowColor = 'transparent'; // 重置阴影
 
      // 绘制图片
-     const img = this.canvas.createImage();
-     img.src = qrPath;
-     await new Promise(resolve => {
-       img.onload = () => {
-         // 调整图片绘制位置和尺寸，使其在边框内部
-         ctx.drawImage(img, imgPlaceholderX + 4, imgPlaceholderY + 4, qrImgSize - 8, qrImgSize - 8);
-         resolve();
-       };
-        img.onerror = () => { // 加载失败时绘制占位符
-          const placeholderImg = this.canvas.createImage();
-          placeholderImg.src = '/images/qr-placeholder.png';
-          placeholderImg.onload = () => {
-            // 调整占位符绘制位置和尺寸，使其在边框内部
-            ctx.drawImage(placeholderImg, imgPlaceholderX + 4, imgPlaceholderY + 4, qrImgSize - 8, qrImgSize - 8);
-            resolve();
-          };
-          placeholderImg.onerror = () => resolve(); // 占位符也加载失败则直接resolve
-       };
-     });
+     await drawImageWithPlaceholder(ctx, this.canvas, qrPath, imgPlaceholderX + 4, imgPlaceholderY + 4, qrImgSize - 8, qrImgSize - 8, '/images/avatar.png');
 
-     // 绘制标签
-     ctx.fillStyle = '#2c3e50';
-     ctx.font = '600 28px sans-serif';
-     ctx.textAlign = 'center';
-     ctx.fillText(qrLabelText, itemX + qrItemWidth/2, imgPlaceholderY + qrImgSize + qrImgMarginBottom + qrLabelHeight/2 + 10); // 这里的偏移已经包含在 imgPlaceholderY 的调整中
-
-     // 绘制描述
+     // 绘制文字，Y坐标为灰色块底部减去一行字高
      ctx.fillStyle = '#7f8c8d';
-     ctx.font = '24px sans-serif';
-     ctx.fillText(qrDescText, itemX + qrItemWidth/2, imgPlaceholderY + qrImgSize + qrImgMarginBottom + qrLabelHeight + qrLabelMarginBottom + qrDescHeight/2 + 10); // 这里的偏移已经包含在 imgPlaceholderY 的调整中
+     ctx.font = `${fontSize}px sans-serif`;
+     ctx.textAlign = 'center';
+     const textY = qrContainerY + qrItemHeight - fontSize;
+     ctx.fillText(qrLabelText, itemX + qrItemWidth/2, textY);
   },
 
-  // 修改生成图片方法，计算并传递正确的高度
+  // 修改生成图片方法，调整画布高度计算
   async generateCard() {
     if (this.data.isGenerating) {
       return;
@@ -1038,13 +901,13 @@ Page({
 
       try {
         // 1. 先用临时画布计算所需高度
-        await this.initCanvas(1000);  // 初始高度
-        this.drawBackground(1000);
+        await this.initCanvas(2000);  // 增加初始高度，确保有足够空间
+        this.drawBackground(2000);
         await this.drawAvatar();
         const finalY = await this.drawInfo();
         
         // 2. 计算实际需要的画布高度（内容高度 + 上下边距）
-        const contentHeight = Math.max(finalY + 80, 1000);  // 确保最小高度1000
+        const contentHeight = Math.max(finalY + 100, 2000);  // 增加边距，确保有足够空间
         
         // 3. 使用计算出的实际高度重新初始化画布
         await this.initCanvas(contentHeight);
@@ -1092,6 +955,3 @@ Page({
     }
   }
 });
-
-
-

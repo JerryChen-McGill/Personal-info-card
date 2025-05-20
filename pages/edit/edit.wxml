@@ -153,7 +153,7 @@
     <!-- 新增：个人作品二维码信息块 -->
     <view class="edit-section {{sectionHidden.worksQr ? 'section-hidden' : ''}}" hover-class="edit-section-hover">
       <view class="section-header">
-        <text class="section-title">其他账号</text>
+        <text class="section-title">小红书账号</text>
          <view class="visibility-toggle" hover-class="visibility-toggle-hover" bindtap="toggleSectionVisibility" data-section="worksQr">
           <image class="visibility-icon" src="{{sectionHidden.worksQr ? '/images/eye-off.png' : '/images/eye-on.png'}}" mode="aspectFit"></image>
         </view>
